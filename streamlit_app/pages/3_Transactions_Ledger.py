@@ -122,9 +122,9 @@ with tab_entry:
     st.markdown("### Post new ledger transaction")
     st.write("Post an actual transaction to the ledger database to simulate real customer dispute scenarios.")
 
-    # Populate options from real data
-    personas = get_all_personas()
-    customer_ids = [p["id"] for p in personas] if personas else ["U-101", "U-102", "U-103", "M-201"]
+    # Populate options from real data (customers and merchants only)
+    personas = [p for p in get_all_personas() if str(p.get("role", "")).lower() not in ("agent", "admin", "staff") and not str(p.get("id", "")).startswith("A-")]
+    customer_ids = [p["id"] for p in personas] if personas else ["U-101", "U-102", "U-103", "U-105"]
 
     bank_rows = ledger_db.query_all("SELECT DISTINCT bank_code FROM transactions WHERE bank_code IS NOT NULL AND bank_code != ''")
     bank_options = [r["bank_code"] for r in bank_rows] if bank_rows else ["HDFC", "SBI", "ICICI", "AXIS", "PAYTM_PAYMENTS_BANK"]
