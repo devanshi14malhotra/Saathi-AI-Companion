@@ -118,7 +118,8 @@ async def main() -> int:
         )
         rw_ms = int((time.perf_counter() - t0) * 1000)
         rw_text = rw_resp.json()["choices"][0]["message"]["content"] if rw_resp.status_code == 200 else "FAILED"
-        print(f"Rewrite result ({rw_ms} ms): {rw_text}")
+        safe_rw = rw_text.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(sys.stdout.encoding or "utf-8")
+        print(f"Rewrite result ({rw_ms} ms): {safe_rw}")
 
         latencies_ms.sort()
         p50 = int(statistics.median(latencies_ms))

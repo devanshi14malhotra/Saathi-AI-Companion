@@ -3,10 +3,9 @@ provider_presets:
     base_url: https://api.sarvam.ai
     chat_path: /v1/chat/completions
     auth_header: api-subscription-key
-    model: sarvam-105b
+    model: sarvam-105b-conversations
     temperature: 0.0
     max_tokens: 800
-    reasoning_effort: low
     timeout_s: 20
 rewrite_enabled: true
 extract_retries: 1

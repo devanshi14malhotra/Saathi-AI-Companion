@@ -86,7 +86,7 @@ class OpenAICompatProvider:
         last_err: Exception | None = None
         for api_key in keys:
             payload: dict[str, Any] = {
-                "model": preset.get("model", "sarvam-105b"),
+                "model": preset.get("model", "sarvam-105b-conversations"),
                 "messages": messages,
                 "temperature": float(preset.get("temperature", 0.0)),
                 "max_tokens": int(preset.get("max_tokens", 800)),
