@@ -1,0 +1,25 @@
+payment_failure:
+  handle_seconds: 420
+  tag: ASSUMPTION
+  note: "Modelled human-only workflow (lookup ledger, check bank status, verify eligibility, initiate refund, reply)"
+refund:
+  handle_seconds: 360
+  tag: ASSUMPTION
+  note: "Modelled human-only workflow (lookup refund status, raise reconciliation if overdue, reply)"
+settlement:
+  handle_seconds: 480
+  tag: ASSUMPTION
+  note: "Modelled human-only workflow (check settlement ledger, holiday calendar, risk hold, reply)"
+app_assistance:
+  handle_seconds: 240
+  tag: ASSUMPTION
+  note: "Modelled human-only workflow (search KB, file bug ticket with device info, reply)"
+fraud:
+  handle_seconds: 600
+  tag: ASSUMPTION
+  note: "Modelled human-only workflow (lock instrument, create fraud ticket, escalate)"
+fallback:
+  handle_seconds: 300
+  tag: ASSUMPTION
+  note: "Modelled human-only triage and response"
+

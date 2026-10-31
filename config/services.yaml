@@ -1,0 +1,13 @@
+ledger:
+  transport: asgi
+  base_url: "http://ledger"
+refunds:
+  transport: asgi
+  base_url: "http://refunds"
+crm:
+  transport: asgi
+  base_url: "http://crm"
+notify:
+  transport: asgi
+  base_url: "http://notify"
+

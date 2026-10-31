@@ -1,0 +1,17 @@
+PAYMENT_FAILED_DEBITED: payment_failure
+PAYMENT_PENDING: payment_failure
+DOUBLE_DEBIT: payment_failure
+REFUND_STATUS: refund
+REFUND_NOT_RECEIVED: refund
+SETTLEMENT_DELAY: settlement
+SETTLEMENT_MISMATCH: settlement
+APP_HOWTO: app_assistance
+APP_BUG: app_assistance
+LOGIN_OTP_HELP: app_assistance
+UNAUTHORIZED_TXN: fraud
+SCAM_REPORT: fraud
+HUMAN_REQUEST: fallback
+OTHER: fallback
+order_priority: [fraud, money, other]
+money_agents: [payment_failure, refund, settlement]
+

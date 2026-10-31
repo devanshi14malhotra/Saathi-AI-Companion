@@ -1,0 +1,2 @@
+"""Notify mock service."""
+

@@ -1,0 +1,8 @@
+upi_failed_debit:
+  applies_to_rails: [UPI]
+  tat_hours: 24
+  per_day_compensation: 100
+  day_rounding: ceil
+  owner: "issuing or acquiring bank"
+  verify_against_current_rbi_circular: true
+

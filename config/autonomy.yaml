@@ -1,0 +1,12 @@
+modes:
+  suggest: {auto_cap: 0}
+  guarded: {auto_cap: 5000}
+  autonomous: {auto_cap: 25000}
+defaults:
+  payment_failure: guarded
+  refund: guarded
+  settlement: guarded
+  app_assistance: autonomous
+  fraud: suggest
+locked: [fraud]
+

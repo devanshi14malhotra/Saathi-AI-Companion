@@ -1,0 +1,130 @@
+REFUND_INITIATED:
+  en: "Your payment of ₹{amount} to {counterparty} ({txn_id}) failed after debit. I have initiated refund {refund_id} for ₹{amount}. It should reach your account within {sla_hours} hours (by {eta})."
+  hinglish: "Aapka ₹{amount} ka {counterparty} ({txn_id}) payment debit ke baad fail ho gaya tha. Maine ₹{amount} ka refund {refund_id} start kar diya hai. Yeh {sla_hours} hours mein ({eta} tak) aapke account mein aa jayega."
+  hi: "आपका ₹{amount} का {counterparty} ({txn_id}) भुगतान डेबिट के बाद विफल हो गया था। मैंने ₹{amount} का रिफंड {refund_id} शुरू कर दिया है। यह {sla_hours} घंटों के भीतर ({eta} तक) आपके खाते में आ जाएगा।"
+
+TXN_SUCCEEDED:
+  en: "I checked transaction {txn_id} for ₹{amount} to {counterparty}. The payment succeeded and the merchant received ₹{amount}, so no refund is needed."
+  hinglish: "Maine {counterparty} ko kiya gaya ₹{amount} ka transaction {txn_id} check kiya. Payment successful raha aur merchant ko ₹{amount} mil chuka hai, isliye refund ki zaroorat nahi hai."
+  hi: "मैंने {counterparty} को किए गए ₹{amount} के लेनदेन {txn_id} की जांच की। भुगतान सफल रहा और मर्चेंट को ₹{amount} प्राप्त हो गए हैं, इसलिए रिफंड की आवश्यकता नहीं है।"
+
+REVERSAL_PENDING:
+  en: "Your payment of ₹{amount} to {counterparty} ({txn_id}) is still pending and your bank has scheduled an automatic reversal within {sla_hours} hours (by {eta}). I have set a follow-up check for {eta}."
+  hinglish: "Aapka ₹{amount} ka {counterparty} ({txn_id}) payment abhi pending hai aur bank ne {sla_hours} hours mein ({eta} tak) auto-reversal schedule kiya hai. Maine {eta} ke liye follow-up check laga diya hai."
+  hi: "आपका ₹{amount} का {counterparty} ({txn_id}) भुगतान अभी लंबित है और आपके बैंक ने {sla_hours} घंटों में ({eta} तक) स्वतः रिवर्सल निर्धारित किया है। मैंने {eta} के लिए फॉलो-अप जांच सेट कर दी है।"
+
+DUPLICATE_REFUND:
+  en: "I found a duplicate charge of ₹{amount} at {counterparty}. One payment succeeded and the extra debit ({txn_id}) failed. I have initiated refund {refund_id} for ₹{amount}, expected within {sla_hours} hours (by {eta})."
+  hinglish: "Mujhe {counterparty} par ₹{amount} ka duplicate debit mila. Ek payment successful tha aur doosra debit ({txn_id}) fail hua. Maine ₹{amount} ka refund {refund_id} start kar diya hai, jo {sla_hours} hours ({eta} tak) mein aa jayega."
+  hi: "मुझे {counterparty} पर ₹{amount} का डुप्लीकेट डेबिट मिला। एक भुगतान सफल रहा और अतिरिक्त डेबिट ({txn_id}) विफल रहा। मैंने ₹{amount} का रिफंड {refund_id} शुरू कर दिया है, जो {sla_hours} घंटों ({eta} तक) में आ जाएगा।"
+
+NO_DEBIT:
+  en: "I verified transaction {txn_id} for ₹{amount} to {counterparty} with your bank. No money was deducted from your account, so you can safely retry the payment."
+  hinglish: "Maine bank se aapka ₹{amount} ka {counterparty} ({txn_id}) transaction verify kiya. Aapke account se paisa nahi kata hai, aap safely dobara payment kar sakte hain."
+  hi: "मैंने बैंक से आपके ₹{amount} के {counterparty} ({txn_id}) लेनदेन की पुष्टि की। आपके खाते से कोई पैसा नहीं कटा है, आप सुरक्षित रूप से दोबारा भुगतान कर सकते हैं।"
+
+REFUND_ETA:
+  en: "Your refund {refund_id} of ₹{amount} for transaction {txn_id} is currently processing and is expected in your account by {eta} (within {sla_hours} hours of initiation)."
+  hinglish: "Transaction {txn_id} ke liye aapka ₹{amount} ka refund {refund_id} abhi process ho raha hai aur {eta} tak ({sla_hours} hours ke andar) aapke account mein aa jayega."
+  hi: "लेनदेन {txn_id} के लिए आपका ₹{amount} का रिफंड {refund_id} अभी प्रक्रिया में है और {eta} तक ({sla_hours} घंटों के भीतर) आपके खाते में आने की उम्मीद है।"
+
+RECON_RAISED:
+  en: "Your refund {refund_id} of ₹{amount} for {txn_id} has crossed the standard window. I have raised reconciliation {recon_id} with the banking partner to expedite it."
+  hinglish: "Aapka {txn_id} ka ₹{amount} refund {refund_id} तय समय से ज़्यादा ले रहा है। Maine banking partner ke saath reconciliation {recon_id} raise kar diya hai taaki yeh jaldi clear ho."
+  hi: "आपका {txn_id} का ₹{amount} रिफंड {refund_id} मानक समय सीमा पार कर चुका है। मैंने इसे तेज़ करने के लिए बैंकिंग पार्टनर के साथ सुलह (reconciliation) {recon_id} दर्ज कर दी है।"
+
+SETTLEMENT_HOLIDAY:
+  en: "Your settlement {refund_id} of ₹{amount} (due {due_date}) was paused due to a bank holiday. It is scheduled to credit on the next working day, {next_date}."
+  hinglish: "Aapka ₹{amount} ka settlement {refund_id} (due {due_date}) bank holiday ki wajah se ruka tha. Yeh agle working day {next_date} ko credit ho jayega."
+  hi: "आपका ₹{amount} का सेटलमेंट {refund_id} (देय तिथि {due_date}) बैंक अवकाश के कारण रुका था। यह अगले कार्य दिवस {next_date} को जमा हो जाएगा।"
+
+SETTLEMENT_MISMATCH:
+  en: "Your settlement {refund_id} credited ₹{actual} against expected ₹{expected} (difference ₹{diff}). I have raised reconciliation {recon_id} for the ₹{diff} difference."
+  hinglish: "Aapke settlement {refund_id} mein expected ₹{expected} ke badle ₹{actual} credit hua (₹{diff} ka antar). Maine ₹{diff} ke liye reconciliation {recon_id} raise kar diya है."
+  hi: "आपके सेटलमेंट {refund_id} में अपेक्षित ₹{expected} के मुकाबले ₹{actual} जमा हुए (अंतर ₹{diff})। मैंने ₹{diff} के अंतर के लिए सुलह {recon_id} दर्ज कर दी है।"
+
+SETTLEMENT_KYC:
+  en: "Your settlement {refund_id} of ₹{amount} is pending KYC verification. Steps to complete: {steps}"
+  hinglish: "Aapka ₹{amount} ka settlement {refund_id} KYC verification pending hone ke kaaran ruka hai. Steps: {steps}"
+  hi: "आपका ₹{amount} का सेटलमेंट {refund_id} KYC सत्यापन लंबित होने के कारण रुका है। पूरा करने के चरण: {steps}"
+
+APP_GUIDE:
+  en: "Here are the steps to resolve this: {steps}"
+  hinglish: "Ise theek karne ke steps yahan hain: {steps}"
+  hi: "इसे हल करने के चरण यहाँ दिए गए हैं: {steps}"
+
+BUG_FILED:
+  en: "I have logged engineering ticket {ticket_id} with your device details. Meanwhile, please try these steps: {steps}"
+  hinglish: "Maine aapke device details ke saath engineering ticket {ticket_id} log kar diya hai. Tab tak kripya yeh steps try karein: {steps}"
+  hi: "मैंने आपके डिवाइस विवरण के साथ इंजीनियरिंग टिकट {ticket_id} दर्ज कर लिया है। इस बीच, कृपया इन चरणों का प्रयास करें: {steps}"
+
+APPROVAL_PENDING:
+  en: "I verified your failed payment of ₹{amount} to {counterparty} ({txn_id}). Since ₹{amount} requires a quick team approval under our policy, I have queued case {case_id} for review and will update you here."
+  hinglish: "Maine aapka {counterparty} ({txn_id}) ka ₹{amount} failed payment verify kar liya hai. Kyunki ₹{amount} ke refund ke liye policy ke tahat team approval zaroori hai, maine case {case_id} review ke liye bhej diya hai."
+  hi: "मैंने {counterparty} ({txn_id}) को आपके ₹{amount} के विफल भुगतान की पुष्टि कर ली है। चूंकि हमारी नीति के तहत ₹{amount} के लिए टीम की त्वरित स्वीकृति आवश्यक है, मैंने केस {case_id} को समीक्षा के लिए भेज दिया है।"
+
+ESCALATED:
+  en: "I have gathered the verified details for case {case_id} and handed it over to a specialist. {owner} is reviewing this and will reply to you here."
+  hinglish: "Maine case {case_id} ki saari verified details collect karke specialist ko hand over kar di hain. {owner} iski jaanch kar rahe hain aur yahin reply karenge."
+  hi: "मैंने केस {case_id} के सभी सत्यापित विवरण एकत्र कर लिए हैं और इसे विशेषज्ञ को सौंप दिया है। {owner} इसकी समीक्षा कर रहे हैं और आपको यहीं उत्तर देंगे।"
+
+FRAUD_LOCKED:
+  en: "For your protection, I have placed a temporary 24-hour security lock on your instrument, logged fraud ticket {ticket_id}, and escalated case {case_id} to our fraud team ({owner})."
+  hinglish: "Aapki suraksha ke liye maine aapke payment instrument par 24-hour ka temporary lock laga diya hai, fraud ticket {ticket_id} banaya hai, aur case {case_id} ko fraud team ({owner}) ko bhej diya hai."
+  hi: "आपकी सुरक्षा के लिए, मैंने आपके भुगतान साधन पर 24 घंटे का अस्थायी सुरक्षा लॉक लगा दिया है, धोखाधड़ी टिकट {ticket_id} दर्ज किया है, और केस {case_id} को हमारी सुरक्षा टीम ({owner}) को सौंप दिया है।"
+
+BLOCKED_SCOPE:
+  en: "I can only check transactions and records linked to your own account. Please verify the transaction ID from your payment history."
+  hinglish: "Main sirf aapke apne account se jude transactions check kar sakta hoon. Kripya apni payment history se transaction ID check karein."
+  hi: "मैं केवल आपके अपने खाते से जुड़े लेनदेन की जांच कर सकता हूं। कृपया अपने भुगतान इतिहास से लेनदेन आईडी की पुष्टि करें।"
+
+CLARIFY_TXN:
+  en: "I found multiple or unclear recent transactions on your account. Please tap the transaction you need help with below:"
+  hinglish: "Mujhe aapke account mein kuch recent transactions mile hain. Kripya neeche us transaction par tap karein jismein aapko madad chahiye:"
+  hi: "मुझे आपके खाते में कई या अस्पष्ट हालिया लेनदेन मिले हैं। कृपया नीचे उस लेनदेन पर टैप करें जिसके लिए आपको सहायता चाहिए:"
+
+HUMAN_ACK:
+  en: "I understand you'd like to speak with a person. I have prepared case {case_id} for {owner}, who will continue with you here."
+  hinglish: "Main samajhta hoon ki aap kisi insaan se baat karna chahte hain. Maine case {case_id} {owner} ke liye tayyar kar diya hai, woh yahin aapse baat karenge."
+  hi: "मैं समझता हूँ कि आप किसी व्यक्ति से बात करना चाहते हैं। मैंने {owner} के लिए केस {case_id} तैयार कर दिया है, वे यहीं आपसे बात करेंगे।"
+
+OUT_OF_SCOPE:
+  en: "I couldn't match your request to a payment, refund, settlement, or app issue. Please share the transaction ID or amount, or tap 'Talk to a human'."
+  hinglish: "Main aapke message ko kisi payment, refund, settlement ya app issue se match nahi kar paya. Kripya transaction ID ya amount batayein, ya 'Talk to a human' chunein."
+  hi: "मैं आपके अनुरोध को किसी भुगतान, रिफंड, सेटलमेंट या ऐप समस्या से नहीं जोड़ सका। कृपया लेनदेन आईडी या राशि साझा करें, या 'Talk to a human' चुनें।"
+
+TOOL_FAILURE:
+  en: "A backend system did not respond after retries while working on {txn_id}. No duplicate action was taken. I have escalated case {case_id} to {owner} to complete this safely."
+  hinglish: "{txn_id} par kaam karte samay backend system ne retries ke baad bhi respond nahi kiya. Koi duplicate action nahi liya gaya hai. Maine case {case_id} ko {owner} ko safely poora karne ke liye bhej diya hai."
+  hi: "{txn_id} पर काम करते समय प्रयासों के बाद भी बैकएंड सिस्टम ने जवाब नहीं दिया। कोई डुप्लीकेट कार्रवाई नहीं की गई। मैंने इसे सुरक्षित रूप से पूरा करने के लिए केस {case_id} को {owner} को सौंप दिया है।"
+
+SECRET_WARNING:
+  en: "Please never share your OTP, PIN or CVV with anyone, including us. I have hidden it from our system."
+  hinglish: "Kripya apna OTP, PIN ya CVV kisi ko bhi na batayein, hamein bhi nahi. Maine ise hamare system se hide kar diya hai."
+  hi: "कृपया अपना OTP, PIN या CVV किसी को भी न बताएं, हमें भी नहीं। मैंने इसे हमारे सिस्टम से छिपा दिया है।"
+
+COMP_NOTE:
+  en: "Your payment was delayed past the {tat_hours}-hour window in our rules. A delay of {days} day(s) may qualify for compensation of up to ₹{amount} from your bank. I've noted it for follow-up."
+  hinglish: "Aapka payment hamare rules ke {tat_hours}-hour window se zyada delay hua hai. {days} din ke delay par aapke bank se ₹{amount} tak ka compensation may qualify ho sakta hai. Maine ise follow-up ke liye note kar liya hai."
+  hi: "आपका भुगतान हमारे नियमों की {tat_hours}-घंटे की समय-सीमा से अधिक विलंबित हुआ। {days} दिन की देरी के लिए आपके बैंक से ₹{amount} तक का मुआवज़ा मिल सकता है (may qualify)। मैंने इसे फॉलो-अप के लिए नोट कर लिया है।"
+
+FOLLOWUP_DONE:
+  en: "Good news: refund {refund_id} of ₹{amount} completed on {date}."
+  hinglish: "Achhi khabar: ₹{amount} ka refund {refund_id} {date} ko complete ho gaya hai."
+  hi: "अच्छी खबर: ₹{amount} का रिफंड {refund_id} {date} को पूरा हो गया है।"
+
+FOLLOWUP_DELAY:
+  en: "Refund {refund_id} of ₹{amount} hasn't completed by {eta}. I've raised it with our team ({recon_id}) and they will contact you."
+  hinglish: "₹{amount} ka refund {refund_id} {eta} tak complete nahi hua hai. Maine ise apni team ({recon_id}) ke saath raise kar diya hai aur woh aapse sampark karenge."
+  hi: "₹{amount} का रिफंड {refund_id} {eta} तक पूरा नहीं हुआ है। मैंने इसे अपनी टीम ({recon_id}) के साथ उठाया है और वे आपसे संपर्क करेंगे।"
+
+PROACTIVE_REFUND:
+  en: "We noticed your payment of ₹{amount} to {counterparty} ({txn_id}) failed because of a bank-side issue. We've started refund {refund_id}, expected within {sla_hours} hours. You don't need to do anything."
+  hinglish: "Humne dekha ki bank-side issue ki wajah se aapka ₹{amount} ka {counterparty} ({txn_id}) payment fail ho gaya tha. Humne refund {refund_id} start kar diya hai, jo {sla_hours} hours mein aa jayega. Aapko kuch karne ki zaroorat nahi hai."
+  hi: "हमने देखा कि बैंक-साइड समस्या के कारण {counterparty} ({txn_id}) को आपका ₹{amount} का भुगतान विफल हो गया था। हमने रिफंड {refund_id} शुरू कर दिया है, जो {sla_hours} घंटों के भीतर आ जाएगा। आपको कुछ करने की आवश्यकता नहीं है।"
+
+INCIDENT_NOTICE:
+  en: "Some payments via {bank_code} are failing right now. If you were debited, you don't need to do anything: affected payments are being reviewed for refund. We'll update this notice."
+  hinglish: "Abhi {bank_code} ke kuch payments fail ho rahe hain. Agar aapka paisa kata hai, toh aapko kuch karne ki zaroorat nahi hai: affected payments refund ke liye review ho rahe hain. Hum is notice ko update karenge."
+  hi: "अभी {bank_code} के माध्यम से कुछ भुगतान विफल हो रहे हैं। यदि आपका पैसा कटा है, तो आपको कुछ करने की आवश्यकता नहीं है: प्रभावित भुगतानों की रिफंड के लिए समीक्षा की जा रही है। हम इस सूचना को अपडेट करेंगे।"
+

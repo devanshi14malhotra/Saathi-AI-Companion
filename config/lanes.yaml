@@ -1,0 +1,5 @@
+green: [app_assistance]
+amber: [payment_failure, refund, settlement]
+red_triggers: [T1, T8]
+red_agents: [fraud]
+

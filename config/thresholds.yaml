@@ -1,0 +1,32 @@
+currency: INR
+ceiling: 25000
+routing_confidence: 0.60
+clarifications_per_case: 1
+tool_retries: 2
+retry_delays_ms: [300, 900]
+max_tool_calls_per_case: 25
+duplicate_window_minutes: 10
+auto_reversal_sla_hours: 24
+refund_sla_hours: 72
+lock_hours: 24
+approval_amber_minutes: 15
+min_auto_confidence: 0.70
+confidence_weights:
+  understanding: 0.3
+  evidence: 0.3
+  policy: 0.2
+  risk: 0.2
+incident_window_s: 120
+incident_min_signals: 8
+incident_min_users: 6
+incident_bulk_max_cases: 50
+followup_poll_s: 5
+followup_after_eta_min: 15
+eval_service_latency_ms: [20, 60]
+promotion_min_decisions: 20
+promotion_min_agreement: 0.95
+velocity_max_auto_refunds_24h: 3
+velocity_max_auto_amount_24h: 15000
+max_message_chars: 2000
+verify_rewrite_max: 2
+
