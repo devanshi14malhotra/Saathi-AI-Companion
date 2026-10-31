@@ -206,14 +206,37 @@ with col_left:
                 # Assistant response from detail["messages"]
                 msgs = res.get("messages", [])
                 assistant_text = ""
+                # Filter strictly for saathi / assistant messages (never echo user!)
                 for m in reversed(msgs):
-                    b = m.get("body", {})
-                    if isinstance(b, dict) and b.get("text"):
-                        assistant_text = b["text"]
-                        break
-                    elif isinstance(b, str) and b:
-                        assistant_text = b
-                        break
+                    if m.get("role") in ("saathi", "assistant") or m.get("kind") in ("resolution", "saathi_text", "clarification"):
+                        b = m.get("body", {})
+                        if isinstance(b, dict) and b.get("text"):
+                            assistant_text = b["text"]
+                            break
+                        elif isinstance(b, str) and b:
+                            assistant_text = b
+                            break
+
+                # If no direct message on parent case, inspect child cases (multi-issue cases)
+                if not assistant_text and res.get("children"):
+                    from app.core.orchestrator import get_case_detail
+                    for ch in res["children"]:
+                        ch_detail = run_async(get_case_detail(ch["id"]))
+                        for m in reversed(ch_detail.get("messages", [])):
+                            if m.get("role") in ("saathi", "assistant"):
+                                t = m.get("body", {}).get("text")
+                                if t:
+                                    assistant_text += (("\n\n" if assistant_text else "") + t)
+                                    break
+
+                # If still empty, check notify outbox
+                if not assistant_text:
+                    from app.mocks.notify.db import notify_db
+                    outbox_msg = notify_db.query_one(
+                        "SELECT message FROM outbox WHERE user_id = ? ORDER BY id DESC LIMIT 1", (pid,)
+                    )
+                    if outbox_msg and outbox_msg.get("message"):
+                        assistant_text = outbox_msg["message"]
 
                 if not assistant_text:
                     assistant_text = f"Case {res.get('id')} has been processed with outcome {res.get('outcome')}."

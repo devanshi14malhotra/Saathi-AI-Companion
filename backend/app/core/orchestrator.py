@@ -349,6 +349,26 @@ async def handle_message(
             child_details.append(c_detail)
 
         primary = child_details[0]
+        # Attach child resolution text to parent case so caller gets the full combined resolution
+        child_texts = []
+        for c in child_details:
+            for m in reversed(c.get("messages", [])):
+                if m.get("role") in ("saathi", "assistant") and m.get("body", {}).get("text"):
+                    child_texts.append(m["body"]["text"])
+                    break
+        if child_texts:
+            combined_text = "\n\n".join(child_texts)
+            bus.publish_customer(
+                persona_id,
+                "resolution",
+                {
+                    "case_id": case_id,
+                    "text": combined_text,
+                    "template_code": primary.get("template_code", "MULTI_ISSUE"),
+                    "diagnosis": primary.get("diagnosis", "MULTI_ISSUE"),
+                },
+                case_id=case_id,
+            )
         execute(
             """
             UPDATE cases
