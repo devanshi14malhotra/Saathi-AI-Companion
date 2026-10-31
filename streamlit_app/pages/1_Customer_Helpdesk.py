@@ -328,6 +328,12 @@ with col_right:
         conf_data = None
         # Try fetching from confidence_log for full 4-signal breakdown
         conf_row = query_core_one("SELECT score, band, signals_json FROM confidence_log WHERE case_id = ?", (case_id,))
+        if not conf_row and detail.get("children"):
+            for ch in detail["children"]:
+                ch_row = query_core_one("SELECT score, band, signals_json FROM confidence_log WHERE case_id = ?", (ch["id"],))
+                if ch_row and ch_row.get("signals_json"):
+                    conf_row = ch_row
+                    break
         if conf_row and conf_row.get("signals_json"):
             try:
                 sig_data = json.loads(conf_row["signals_json"])

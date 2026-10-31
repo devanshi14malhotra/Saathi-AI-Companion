@@ -82,10 +82,10 @@ def confidence_panel(conf: Any) -> None:
     elif isinstance(conf, dict):
         score = float(conf.get("score") or conf.get("overall") or 0.0)
         band = str(conf.get("band") or ("HIGH" if score >= 0.85 else ("MEDIUM" if score >= 0.70 else "LOW"))).upper()
-        und = float(conf.get("understanding") or 0.0)
-        evi = float(conf.get("evidence") or 0.0)
-        pol = float(conf.get("policy") or 0.0)
-        risk = float(conf.get("risk") or 0.0)
+        und = float(conf["understanding"]) if "understanding" in conf and conf["understanding"] is not None else score
+        evi = float(conf["evidence"]) if "evidence" in conf and conf["evidence"] is not None else score
+        pol = float(conf["policy"]) if "policy" in conf and conf["policy"] is not None else score
+        risk = float(conf["risk"]) if "risk" in conf and conf["risk"] is not None else score
 
     score_pct = int(score * 100) if score <= 1.0 else int(score)
     band_color = "#027A48" if band == "HIGH" else ("#B54708" if band == "MEDIUM" else "#B42318")
