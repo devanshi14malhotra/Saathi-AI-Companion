@@ -155,7 +155,10 @@ with tab_entry:
         submitted = st.form_submit_button("Post transaction", type="primary")
 
         if submitted:
-            new_txn_id = next_id("txn")
+            while True:
+                new_txn_id = next_id("txn")
+                if not ledger_db.query_one("SELECT id FROM transactions WHERE id = ?", (new_txn_id,)):
+                    break
             now_iso = datetime.now(timezone.utc).isoformat()
             ledger_db.execute(
                 """

@@ -110,6 +110,38 @@ def get_all_escalations() -> list[dict[str, Any]]:
     )
 
 
+def resolve_approval(
+    approval_id: str,
+    action_decision: str,
+    reviewer: str = "Support Lead",
+    reason_code: str | None = None,
+    reason_text: str | None = None,
+) -> bool:
+    """Executes human approval decision via authoritative orchestrator engine with closed-loop verification & audit logging."""
+    norm_decision = "APPROVED" if action_decision.upper() in ("APPROVE", "APPROVED") else "REJECTED"
+    r_code = reason_code or ("HUMAN_APPROVED" if norm_decision == "APPROVED" else "HUMAN_REJECTED")
+    r_text = reason_text or (
+        f"Approved by {reviewer} via Agent Co-Pilot" if norm_decision == "APPROVED"
+        else f"Rejected by {reviewer} via Agent Co-Pilot"
+    )
+
+    try:
+        run_async(
+            decide_approval(
+                approval_id,
+                decision=norm_decision,
+                actor=reviewer,
+                reason_code=r_code,
+                reason_text=r_text,
+                view_mode="card",
+            )
+        )
+        return True
+    except Exception as exc:
+        print(f"Error in resolve_approval({approval_id}): {exc}")
+        return False
+
+
 def get_live_metrics() -> dict[str, Any]:
     """Computes real metrics directly from live SQLite tables."""
     total_cases_res = query_core_one("SELECT COUNT(*) as c FROM cases")

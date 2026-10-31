@@ -35,7 +35,7 @@ page_header(
 raw1 = os.environ.get("SARVAM_API_KEY", "").strip()
 raw2 = os.environ.get("SARVAM_API_KEY_2", "").strip()
 active_provider = get_provider_name()
-sarvam_model = cfg_mgr.llm.get("provider_presets", {}).get("sarvam", {}).get("model", "sarvam-105b")
+sarvam_model = cfg_mgr.llm.get("provider_presets", {}).get("sarvam", {}).get("model", "sarvam-105b-conversations")
 
 
 def mask_key(k: str) -> str:
