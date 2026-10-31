@@ -102,7 +102,7 @@ has_sarvam = len(sarvam_keys) > 0
 
 with st.expander("🎙️ Live Voice Input (Microphone & Audio Upload)", expanded=True):
     if not has_sarvam:
-        st.info("💡 Sarvam AI key not detected in `.env`. Add `SARVAM_API_KEY=...` to your `.env` to enable live speech transcription.")
+        st.info("💡 Sarvam AI voice model is offline. Text-based query handling is active.")
 
     v_tab1, v_tab2 = st.tabs(["🔴 Live Microphone Recording", "📁 Upload Audio File"])
 
@@ -119,7 +119,7 @@ with st.expander("🎙️ Live Voice Input (Microphone & Audio Upload)", expande
                         st.success(f"Transcribed: '{transcript}'")
                         st.rerun()
                     else:
-                        st.error("Sarvam STT failed. Check your API key in `.env`.")
+                        st.error("Sarvam STT failed. Check your API key or network connection.")
 
     with v_tab2:
         audio_file = st.file_uploader("Upload audio recording (.wav / .mp3 / .m4a):", type=["wav", "mp3", "m4a"], key="upload_file")
@@ -132,7 +132,7 @@ with st.expander("🎙️ Live Voice Input (Microphone & Audio Upload)", expande
                     st.success(f"Transcribed: '{transcript}'")
                     st.rerun()
                 else:
-                    st.error("Sarvam STT failed. Check your API key in `.env`.")
+                    st.error("Sarvam STT failed. Check your API key or network connection.")
 
 # Main Input Form
 default_text = st.session_state.get("query_input", "Mera ₹1,499 do baar deduct hua hai. Kripya refund check karein.")
@@ -184,14 +184,30 @@ if detail:
     else:
         st.markdown(f'<span class="status-pill pill-info" style="font-weight: 700;">ℹ️ {outcome}</span> &nbsp; Agent: <b>{agent}</b>', unsafe_allow_html=True)
 
-    # Fetch customer-facing resolution messages
+    # Fetch customer-facing resolution messages and dynamic 3-part sections
     msgs = detail.get("messages", [])
     cust_msg_text = ""
+    sections = {}
     for m in reversed(msgs):
         body = m.get("body", {})
-        if isinstance(body, dict) and body.get("text"):
-            cust_msg_text = body["text"]
+        if isinstance(body, dict):
+            if not cust_msg_text and body.get("text"):
+                cust_msg_text = body["text"]
+            if not sections and body.get("found"):
+                sections = {"found": body.get("found"), "did": body.get("did"), "next": body.get("next")}
+        if cust_msg_text and sections:
             break
+
+    if not sections:
+        for e in reversed(detail.get("events", [])):
+            sec = e.get("payload", {}).get("sections")
+            if isinstance(sec, dict) and sec.get("found"):
+                sections = sec
+                break
+
+    found_text = sections.get("found") or f"Identified issue {detail.get('intent', 'PAYMENT_QUERY')} for user {pid}. Verified banking ledger records for payment state and debit confirmation."
+    did_text = sections.get("did") or ("Executed automated refund via refunds microservice and verified receipt with read-after-write check." if outcome == "AUTO" else "Transferred with structured Handoff Packet to Human Support Lead due to safety policy threshold.")
+    next_text = sections.get("next") or (cust_msg_text or "Status updated in core.db. Notification dispatched to customer outbox.")
 
     # Structured 3-Part Resolution Card (White background with explicit black text)
     ext = detail.get("extraction", {})
@@ -201,20 +217,19 @@ if detail:
             <div class="resolution-section" style="margin-bottom: 0.85rem;">
                 <span class="resolution-label res-found" style="color: #06457F !important; font-weight: 700;">🔍 1. What Saathi Found</span>
                 <p style="margin: 0.25rem 0 0 0; color: #000000 !important; font-size: 0.95rem; line-height: 1.5;">
-                    Identified issue <b style="color: #000000 !important;">{detail.get('intent', 'PAYMENT_QUERY')}</b> for user <code style="background-color: #EEF2F6 !important; color: #0474C4 !important; font-weight: 700;">{pid}</code>. 
-                    Verified banking ledger records for payment state and debit confirmation.
+                    {found_text}
                 </p>
             </div>
             <div class="resolution-section" style="margin-bottom: 0.85rem;">
                 <span class="resolution-label res-did" style="color: #0474C4 !important; font-weight: 700;">⚡ 2. What Saathi Did</span>
                 <p style="margin: 0.25rem 0 0 0; color: #000000 !important; font-size: 0.95rem; line-height: 1.5;">
-                    {"Executed automated refund via refunds microservice and verified receipt with read-after-write check." if outcome == "AUTO" else "Transferred with structured Handoff Packet to Human Support Lead (Priya Nair) due to safety policy threshold."}
+                    {did_text}
                 </p>
             </div>
             <div class="resolution-section">
                 <span class="resolution-label res-next" style="color: #2C444C !important; font-weight: 700;">📌 3. Next Steps & Timeline</span>
                 <p style="margin: 0.25rem 0 0 0; color: #000000 !important; font-size: 0.95rem; line-height: 1.5;">
-                    {cust_msg_text or "Status updated in core.db. Notification dispatched to customer outbox."}
+                    {next_text}
                 </p>
             </div>
         </div>
@@ -232,7 +247,7 @@ if detail:
     with voice_col2:
         if st.button("Generate Sarvam Voice Audio 🎧", key="btn_gen_voice"):
             if not has_sarvam:
-                st.warning("Add `SARVAM_API_KEY=...` to your `.env` to synthesize live audio.")
+                st.warning("Sarvam AI voice synthesis is offline.")
             else:
                 with st.spinner("Synthesizing audio using Sarvam bulbul:v3..."):
                     speech_bytes = text_to_speech(cust_msg_text, language_code="hi-IN", speaker=speaker_id)

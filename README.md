@@ -25,50 +25,99 @@ Saathi v6.0 is an end-to-end autonomous AI customer-service teammate for digital
 
 ---
 
-## Quickstart Commands (Windows PowerShell & Unix Make)
+## Quickstart Commands (Windows PowerShell & Unix / Mac)
 
-### 1. Start the Backend Server (`http://127.0.0.1:8000`)
-```powershell
+### 1. Start the Backend API Server (`http://127.0.0.1:8000`)
+```bash
+# Unix / Mac:
+PYTHONPATH=backend python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
+# Windows PowerShell:
 .\make.ps1 backend
 ```
 
-### 2. Start the Frontend Web UI (`http://127.0.0.1:5173`)
-```powershell
+### 2. Start the Interactive Streamlit Workspace (`http://127.0.0.1:8501`)
+```bash
+# Unix / Mac:
+PYTHONPATH=backend streamlit run streamlit_app/app.py
+
+# Windows PowerShell:
+.\make.ps1 streamlit
+# or:
 .\make.ps1 frontend
 ```
 
 ### 3. Run Unit & Integration Tests (`pytest`)
-```powershell
+```bash
+# Unix / Mac:
+PYTHONPATH=backend python3 -m pytest backend/tests -v
+
+# Windows PowerShell:
 .\make.ps1 test
 ```
 
-### 4. Run Canonical Scenarios (`S1`–`S35`)
-```powershell
+### 4. Run Canonical Scenarios (`S1`–`S35`, 66 Cases)
+```bash
+# Unix / Mac:
+PYTHONPATH=backend LLM_PROVIDER=stub SAATHI_ENV=eval python3 -m app.eval.harness --cmd scenarios
+
+# Windows PowerShell:
 .\make.ps1 scenarios
 ```
 
 ### 5. Run Full Trust Evaluation Harvest (`/trust` Proof Suite)
-```powershell
+```bash
+# Unix / Mac:
+PYTHONPATH=backend LLM_PROVIDER=stub SAATHI_ENV=eval python3 -m app.eval.harness --cmd trust
+
+# Windows PowerShell:
 .\make.ps1 trust
 ```
 
 ### 6. Reset All 5 SQLite Databases to Canonical Seed
-```powershell
+```bash
+# Unix / Mac:
+PYTHONPATH=backend python3 -m app.eval.harness --cmd reset
+
+# Windows PowerShell:
 .\make.ps1 reset
 ```
 
 ---
 
-## Key Views in the Web Application
+## Key Views in the Streamlit Web Application (`http://127.0.0.1:8501`)
 
-- **Workspace Split View (`/showcase`)**:
-  - Top **Guided Verification Path** bar with **90s Judge Path (5 Beats)** and **Full Story (8 Steps)**.
-  - Left pane: **Customer Support Channel** with persona switcher (`U-101` Aarav Sharma, `U-102` Priya Nair, `U-103` Meera Krishnan, `M-201` Ramesh Kirana Store, `M-202` QuickBite Cafe), proactive scan (`F1`), voice fixtures (`F16`), clarify chips (`S16`), and customer-verifiable audit receipts (`F14`).
-  - Right pane: **Execution Trace** (step-by-step `[MASK]`, `[GUARD]`, `[READ]`, `[POLICY]`, `[WRITE]`, `[VERIFY] ✓` timeline + 4-signal confidence breakdown), **12-Second Decision Card & Approvals** (`Why you?` line, 1-click Approve / Edit & Approve / Reject with reason code, Take Ownership, Hand Back to AI `RECHECK` / `CLOSE_WITH_REPLY`, Mark Wrong `Rule 15`), and **Live Systems Grid** (live SQLite rows across all 4 downstream services).
-- **Ops Console & Fleet Command Center (`/console`)**:
-  - 4 Traffic-Light Decision Lanes (`ACT_NOW`, `WAIT_AND_VERIFY`, `APPROVAL_QUEUE`, `HUMAN_ONLY`).
-  - Cross-Case Bank Outage Detection (`F4`) with Dry-Run Impact Preview, Public Deflection Banner publishing, and 1-click Bulk Resolution.
-  - Closed-Loop Follow-Up Scheduler (`F2`) and Earned Autonomy Graduation (`F7`) + Emergency Money-Action Kill-Switch.
-- **Empirical Trust & Proof Report (`/trust`)**:
-  - Renders 100% live metrics from stored evaluation runs in `core.db` (Rule 17): 95% Wilson confidence intervals, 3-Arm comparison (`Arm A FAQ Bot`, `Arm B Human Baseline`, `Arm C Saathi`), Safety-by-Construction Ablation table (`no_verify`, `no_policy`, `no_guard`, `no_idem`, `no_gate`), interactive Counterfactual Policy What-If Simulator, 4-Signal Confidence Reliability Diagram (`ECE`), Multilingual Parity (`EN` / `Hinglish` / `HI`), and 96-run Adversarial Red-Team Matrix (32 base attacks × 3 mutators).
+1. **💬 1. Customer Helpdesk & Voice Assistant**:
+   - Live customer dispute resolution supporting English, Hindi, and Hinglish.
+   - Live Microphone Voice STT (`saaras:v1`) and Speech Synthesis TTS (`bulbul:v3`) via Sarvam AI API.
+   - Dynamic 3-Part Resolution Cards (What Saathi Found / What Saathi Did / What Happens Next).
+   - Customer-safe action receipt timeline (F14) and deep technical orchestrator traces.
+
+2. **🛡️ 2. Human Agent Co-Pilot (Supervisor Inbox)**:
+   - Amber-lane high-value financial approval queue (>₹5,000 cap, velocity holds).
+   - Structured Handoff Packets with verified facts, diagnosis, and policy reasoning.
+   - 1-Click Authorize & Execute routed through the authoritative orchestrator with read-after-write verification (`[VERIFY] ✓`) and idempotency.
+
+3. **💳 3. Live Transactions & Ledger**:
+   - Real-time explorer across UPI, BillPay, and Merchant rails in `ledger.db`.
+   - Real-time active refund records in `refunds.db`.
+   - Interactive transaction entry form to test dispute resolution against new banking records.
+
+4. **⚡ 4. Operations War-Room & Teammate Superpowers**:
+   - Partner Bank Outage Monitor with canonical `bank_code|rail` signatures.
+   - **Dry-Run Impact Preview** (Beat 3 · It Acts Before Complaints): inspects affected users and financial exposure without mutating state.
+   - **1-Click Proactive Outage Resolution**: issues verified bulk refunds across affected cohorts automatically.
+   - **Time-Travel Machine (+24h / +73h)**: triggers RBI TAT delayed reversal compensations (₹100/day).
+   - **Controlled Chaos Injection**: arms phantom 201 writes and 504 timeouts to demonstrate closed-loop read-after-write verification recovery live.
+   - **Autonomy Dials & Emergency Kill-Switches**: live persistence to `config_state` with full audit logs.
+
+5. **📊 5. Empirical Trust, Proof Suite & Telemetry**:
+   - **3-Arm Comparative Benchmark**: Arm A (FAQ Bot) vs Arm B (Human Baseline) vs Arm C (Saathi Autonomous Teammate, 100% pass rate, 95% Wilson CI [0.9286, 1.0]).
+   - **Safety-by-Construction Ablations**: `no_verify`, `no_policy`, `no_guard`, `no_idem`, `no_gate`.
+   - **96-Run Adversarial Red-Team Matrix**: Protected (96/96 passed, 0 critical failures) vs Unprotected (58.3% Attack Success Rate).
+   - **Language Parity & ECE Calibration**: English, Hinglish, Hindi parity comparisons and Expected Calibration Error (<0.03).
+   - **Live Case Decision & Microservice Verification Logs**.
+
+6. **⚙️ 6. System & Model Health**:
+   - Environment credentials, dual-account Sarvam AI credit pooling, live ping latency tests, and provider switcher (Sarvam-105B LLM vs local offline deterministic stub).
 

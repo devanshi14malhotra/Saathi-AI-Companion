@@ -13,7 +13,7 @@ switch ($Target) {
         & $Python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
     }
     "frontend" {
-        npm --prefix "$Root\web" run dev
+        & $Python -m streamlit run "$Root\streamlit_app\app.py" @Rest
     }
     "streamlit" {
         & $Python -m streamlit run "$Root\streamlit_app\app.py" @Rest
