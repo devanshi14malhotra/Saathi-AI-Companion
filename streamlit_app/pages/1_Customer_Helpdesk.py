@@ -161,7 +161,7 @@ with col_left:
         v_col1, v_col2 = st.columns(2)
         with v_col1:
             mic_audio = st.audio_input("Record audio", key=f"mic_{pid}")
-            if mic_audio is not None and st.button("Transcribe recording with saaras:v3", key="btn_mic_tx"):
+            if mic_audio is not None and st.button("Transcribe recording with saaras:v3", key=f"btn_mic_tx_{pid}"):
                 with st.spinner("Transcribing..."):
                     tx_lang = "hi-IN" if customer.get("language") in ("hi", "hinglish") else "en-IN"
                     txt = speech_to_text(mic_audio.getvalue(), language_code=tx_lang)
@@ -172,7 +172,7 @@ with col_left:
                         st.error("Speech transcription was unable to process audio.")
         with v_col2:
             up_audio = st.file_uploader("Upload audio file", type=["wav", "mp3", "m4a"], key=f"up_{pid}")
-            if up_audio is not None and st.button("Transcribe file with saaras:v3", key="btn_up_tx"):
+            if up_audio is not None and st.button("Transcribe file with saaras:v3", key=f"btn_up_tx_{pid}"):
                 with st.spinner("Transcribing..."):
                     tx_lang = "hi-IN" if customer.get("language") in ("hi", "hinglish") else "en-IN"
                     txt = speech_to_text(up_audio.read(), language_code=tx_lang)
@@ -309,16 +309,16 @@ with col_right:
             opts = latest_msg.get("body", {}).get("options") or latest_msg.get("options") or []
             if opts:
                 st.markdown("<b>Select an option to clarify:</b>", unsafe_allow_html=True)
-                for opt in opts:
+                for idx, opt in enumerate(opts):
                     opt_text = opt.get("label") or opt.get("text") or str(opt)
-                    opt_txn = opt.get("txn_id")
-                    if st.button(opt_text, key=f"clarify_{case_id}_{opt_text[:15]}"):
+                    opt_txn = opt.get("txn_id") or f"opt_{idx}"
+                    if st.button(opt_text, key=f"clarify_{case_id}_{pid}_{idx}_{opt_txn}"):
                         with st.spinner("Processing clarification..."):
                             c_res = run_async(handle_message(
                                 persona_id=pid,
                                 text=opt_text,
                                 case_id=case_id,
-                                selected_txn_id=opt_txn,
+                                selected_txn_id=opt_txn if opt_txn != f"opt_{idx}" else None,
                             ))
                             st.session_state[f"active_case_{pid}"] = c_res
                             st.rerun()
