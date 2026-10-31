@@ -141,7 +141,7 @@ with c6:
             <h4 style="color: #06457F; margin-top:0;">⚙️ 6. System & Model Health</h4>
             <p style="color: #2C444C; font-size: 0.9rem;">
                 Monitors live API credentials with dual-account credit failover. 
-                Test live API health, switch between Sarvam-30B LLM and local offline stub, and test voice synthesis.
+                Test live API health with Sarvam-105B Conversations and verify speech synthesis.
             </p>
         </div>
         """,

@@ -69,34 +69,91 @@ with col_p2:
 
 # Customer's live transactions in ledger
 txns = get_user_transactions(pid)
-with st.expander(f"💳 View {customer['name']}'s Recent Ledger Transactions ({len(txns)} found)", expanded=False):
+with st.expander(f"💳 View {customer['name']}'s Recent Ledger Transactions ({len(txns)} found)", expanded=bool(txns)):
     if txns:
-        import pandas as pd
-        st.dataframe(
-            pd.DataFrame(txns)[["id", "amount", "counterparty", "status", "debit_status", "bank_code", "created_at"]],
-            use_container_width=True,
-            hide_index=True,
-        )
+        st.write("Click **Dispute** on any verified ledger transaction to auto-fill the complaint form:")
+        for t in txns[:4]:
+            t_col1, t_col2, t_col3, t_col4 = st.columns([2, 3, 3, 2])
+            with t_col1:
+                st.markdown(f"**`{t['id']}`**")
+                st.caption(f"₹{t['amount']:,}")
+            with t_col2:
+                st.markdown(f"**{t.get('counterparty', 'N/A')}**")
+                st.caption(f"Bank: {t.get('bank_code', 'N/A')}")
+            with t_col3:
+                st.markdown(f"`{t.get('status')}` / `{t.get('debit_status')}`")
+                st.caption(f"Reversal: {t.get('reversal_status', 'NONE')}")
+            with t_col4:
+                if st.button(f"Dispute {t['id']}", key=f"btn_disp_{t['id']}", type="secondary"):
+                    if t.get('debit_status') == 'DEBITED' and t.get('status') == 'FAILED':
+                        st.session_state["query_input"] = f"My ₹{t['amount']:,} payment to {t['counterparty']} ({t['id']}) failed but money was deducted from my account."
+                    elif t.get('status') == 'PENDING':
+                        st.session_state["query_input"] = f"My ₹{t['amount']:,} payment to {t['counterparty']} ({t['id']}) is stuck in pending status. Please check."
+                    elif t.get('status') == 'SUCCESS':
+                        st.session_state["query_input"] = f"My payment of ₹{t['amount']:,} to {t['counterparty']} ({t['id']}) says successful, but merchant claims they didn't receive it."
+                    else:
+                        st.session_state["query_input"] = f"I need help regarding transaction {t['id']} for ₹{t['amount']:,} to {t['counterparty']}."
+                    st.rerun()
     else:
-        st.caption("No prior transactions recorded for this customer.")
+        st.caption("No prior transactions recorded for this customer in ledger.db.")
 
 st.markdown("---")
 
 # 2. Input Section
 st.subheader("📝 Customer Message / Voice Input")
 
-quick_col1, quick_col2, quick_col3, quick_col4 = st.columns(4)
-if quick_col1.button("⚡ ₹1,499 Duplicate Debit", help="Duplicate debit refund inquiry"):
-    st.session_state["query_input"] = "Mera ₹1,499 do baar deduct hua hai swiggy pe. Pls refund karo."
+# Dynamic Quick Actions generated from real customer role & actual ledger transactions
+is_merchant = customer.get("role", "").lower() == "merchant"
 
-if quick_col2.button("⚠️ ₹4,500 High-Value Bill", help="High-value payment complaint"):
-    st.session_state["query_input"] = "I paid electricity bill of Rs 4500 but it failed and money was debited."
-
-if quick_col3.button("🏦 HDFC Outage Payment", help="Bank downtime payment inquiry"):
-    st.session_state["query_input"] = "Payment to Ramesh failed from my HDFC bank account. Did the money cut?"
-
-if quick_col4.button("⏳ Delayed Refund Check", help="Delayed refund and RBI TAT compensation"):
-    st.session_state["query_input"] = "TXN-8821 refund has not come since 3 days. Where is my money?"
+if is_merchant:
+    q1, q2, q3, q4 = st.columns(4)
+    if q1.button("🏪 Settlement Holiday", help="Query merchant settlement batch"):
+        st.session_state["query_input"] = "My daily settlement was scheduled today but has not arrived in bank account."
+        st.rerun()
+    if q2.button("📊 Settlement Mismatch", help="Dispute short settlement credit"):
+        st.session_state["query_input"] = "My settlement credited less than my expected sales. Please reconcile difference."
+        st.rerun()
+    if q3.button("🔊 Soundbox Issue", help="Report soundbox notification trouble"):
+        st.session_state["query_input"] = "My Paytm soundbox is not announcing payments received from customers."
+        st.rerun()
+    if q4.button("🔑 QR & Bank Update", help="Merchant QR and account guidance"):
+        st.session_state["query_input"] = "How do I update the settlement bank account linked to my merchant QR code?"
+        st.rerun()
+elif txns:
+    t_buttons = txns[:3]
+    cols = st.columns(4)
+    for idx, t in enumerate(t_buttons):
+        with cols[idx]:
+            amt = t['amount']
+            cp = t.get('counterparty', 'Merchant')
+            st_text = t.get('status', '')
+            btn_label = f"⚡ ₹{amt:,} {cp[:12]} ({st_text})"
+            if st.button(btn_label, key=f"dyn_btn_{t['id']}"):
+                if t.get('debit_status') == 'DEBITED' and t.get('status') == 'FAILED':
+                    st.session_state["query_input"] = f"Mera ₹{amt:,} ka {cp} ({t['id']}) payment debit hone ke baad fail ho gaya. Refund check karo."
+                elif t.get('status') == 'PENDING':
+                    st.session_state["query_input"] = f"Mera ₹{amt:,} ka {cp} ({t['id']}) recharge pending mein atka hai. Paisa kat gaya."
+                else:
+                    st.session_state["query_input"] = f"I was charged ₹{amt:,} at {cp} ({t['id']}). Please check transaction status."
+                st.rerun()
+    with cols[3]:
+        if st.button("🔑 Change UPI PIN", key="dyn_btn_pin"):
+            st.session_state["query_input"] = "how do I change my UPI PIN"
+            st.rerun()
+else:
+    q1, q2, q3, q4 = st.columns(4)
+    if q1.button("🔑 Reset UPI PIN", key="nob_pin"):
+        st.session_state["query_input"] = "how do I change my UPI PIN"
+        st.rerun()
+    if q2.button("🛠️ App Crash on Checkout", key="nob_crash"):
+        st.session_state["query_input"] = "Paytm app keeps crashing on the payment confirmation screen."
+        st.rerun()
+    if q3.button("🚨 Unauthorized Scam", key="nob_scam"):
+        st.session_state["query_input"] = "I told a caller my OTP and money was debited from my account."
+        st.rerun()
+    if q4.button("📱 Change Mobile Number", key="nob_mob"):
+        st.session_state["query_input"] = "How can I change my registered mobile number in Paytm?"
+        st.rerun()
 
 # Voice Input with Live Microphone & File Upload
 sarvam_keys = get_configured_keys()
@@ -113,7 +170,7 @@ with st.expander("🎙️ Live Voice Input (Microphone & Audio Upload)", expande
         live_audio = st.audio_input("Record voice query live:", key="mic_recorder")
         if live_audio is not None:
             if st.button("Transcribe Live Recording with Sarvam AI 🎙️", type="primary", key="btn_transcribe_live"):
-                with st.spinner("Transcribing speech with Sarvam saaras:v1..."):
+                with st.spinner("Transcribing speech with Sarvam saaras:v3..."):
                     audio_bytes = live_audio.getvalue()
                     transcript = speech_to_text(audio_bytes, language_code="hi-IN")
                     if transcript:
@@ -125,7 +182,7 @@ with st.expander("🎙️ Live Voice Input (Microphone & Audio Upload)", expande
 
     with v_tab2:
         audio_file = st.file_uploader("Upload audio recording (.wav / .mp3 / .m4a):", type=["wav", "mp3", "m4a"], key="upload_file")
-        if audio_file is not None and st.button("Transcribe Uploaded File with Sarvam saaras:v1 📁", key="btn_transcribe_upload"):
+        if audio_file is not None and st.button("Transcribe Uploaded File with Sarvam saaras:v3 📁", key="btn_transcribe_upload"):
             with st.spinner("Transcribing speech with Sarvam AI..."):
                 audio_bytes = audio_file.read()
                 transcript = speech_to_text(audio_bytes, language_code="hi-IN")
@@ -137,7 +194,13 @@ with st.expander("🎙️ Live Voice Input (Microphone & Audio Upload)", expande
                     st.error("Sarvam STT failed. Check your API key or network connection.")
 
 # Main Input Form
-default_text = st.session_state.get("query_input", "Mera ₹1,499 do baar deduct hua hai. Kripya refund check karein.")
+if "query_input" in st.session_state and st.session_state["query_input"]:
+    default_text = st.session_state["query_input"]
+elif txns and any(t.get("status") == "FAILED" for t in txns):
+    first_failed = next(t for t in txns if t.get("status") == "FAILED")
+    default_text = f"Mera ₹{first_failed['amount']:,} ka {first_failed.get('counterparty', 'payment')} ({first_failed['id']}) fail ho gaya par paisa kat gaya."
+else:
+    default_text = ""
 message_text = st.text_area(
     "Customer Query (English, Hindi, or Hinglish):",
     value=default_text,

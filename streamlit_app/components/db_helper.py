@@ -131,7 +131,7 @@ def get_live_metrics() -> dict[str, Any]:
     """Computes real metrics directly from live SQLite tables."""
     total_cases = query_core_one("SELECT COUNT(*) as c FROM cases")["c"]
     auto_resolved = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome = 'AUTO'")["c"]
-    escalated = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome = 'ESCALATE'")["c"]
+    escalated = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome IN ('ESCALATE', 'APPROVE')")["c"]
     
     total_refunds_res = refunds_db.query_one("SELECT COUNT(*) as c, COALESCE(SUM(amount), 0) as s FROM refunds")
     refund_count = total_refunds_res["c"]
@@ -141,7 +141,7 @@ def get_live_metrics() -> dict[str, Any]:
     comp_count = comp_res["c"] if comp_res else 0
     comp_amount = comp_res["s"] if comp_res else 0
 
-    rate = (auto_resolved / total_cases * 100) if total_cases > 0 else 100.0
+    rate = (auto_resolved / total_cases * 100) if total_cases > 0 else 0.0
 
     return {
         "total_cases": total_cases,
