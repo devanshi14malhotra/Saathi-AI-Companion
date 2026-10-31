@@ -29,7 +29,12 @@ from app.core.orchestrator import handle_message, get_case_detail, build_case_re
 
 
 def init_app_state() -> None:
-    """Ensures database connections and counter sequences are synced."""
+    """Initializes databases and syncs counter sequences."""
+    try:
+        from app.main import ensure_all_dbs_initialized
+        ensure_all_dbs_initialized()
+    except Exception:
+        pass
     sync_id_counters(get_core_conn())
 
 
@@ -41,34 +46,44 @@ def run_async(coro: Any) -> Any:
         loop = None
 
     if loop is not None and loop.is_running():
-        # Inside an active running event loop (e.g. Streamlit worker thread):
-        # Offload to a dedicated worker thread to run to completion without collision
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
             return pool.submit(asyncio.run, coro).result()
     return asyncio.run(coro)
 
 
 def get_all_personas() -> list[dict[str, Any]]:
-    """Fetches real customers from CRM DB."""
-    return crm_db.query_all("SELECT * FROM customers ORDER BY id ASC")
+    """Fetches real customers from CRM DB, returning an empty list gracefully if none exist."""
+    try:
+        return crm_db.query_all("SELECT * FROM customers ORDER BY id ASC") or []
+    except Exception:
+        return []
 
 
 def get_user_transactions(user_id: str) -> list[dict[str, Any]]:
     """Fetches live ledger transactions for a user."""
-    return ledger_db.query_all(
-        "SELECT * FROM transactions WHERE user_id = ? ORDER BY created_at DESC",
-        (user_id,),
-    )
+    try:
+        return ledger_db.query_all(
+            "SELECT * FROM transactions WHERE user_id = ? ORDER BY created_at DESC",
+            (user_id,),
+        ) or []
+    except Exception:
+        return []
 
 
 def get_all_transactions(limit: int = 50) -> list[dict[str, Any]]:
     """Fetches global transactions from ledger DB."""
-    return ledger_db.query_all(f"SELECT * FROM transactions ORDER BY created_at DESC LIMIT {limit}")
+    try:
+        return ledger_db.query_all(f"SELECT * FROM transactions ORDER BY created_at DESC LIMIT {limit}") or []
+    except Exception:
+        return []
 
 
 def get_all_refunds(limit: int = 50) -> list[dict[str, Any]]:
     """Fetches live refunds from refunds DB."""
-    return refunds_db.query_all(f"SELECT * FROM refunds ORDER BY initiated_at DESC LIMIT {limit}")
+    try:
+        return refunds_db.query_all(f"SELECT * FROM refunds ORDER BY initiated_at DESC LIMIT {limit}") or []
+    except Exception:
+        return []
 
 
 def get_pending_approvals() -> list[dict[str, Any]]:
@@ -95,47 +110,20 @@ def get_all_escalations() -> list[dict[str, Any]]:
     )
 
 
-def resolve_approval(
-    approval_id: str,
-    action_decision: str,
-    reviewer: str = "Support Lead",
-    reason_code: str | None = None,
-    reason_text: str | None = None,
-) -> bool:
-    """Executes human approval decision via authoritative orchestrator engine with closed-loop verification & audit logging."""
-    norm_decision = "APPROVED" if action_decision.upper() in ("APPROVE", "APPROVED") else "REJECTED"
-    r_code = reason_code or ("HUMAN_APPROVED" if norm_decision == "APPROVED" else "HUMAN_REJECTED")
-    r_text = reason_text or (
-        f"Approved by {reviewer} via Agent Co-Pilot" if norm_decision == "APPROVED"
-        else f"Rejected by {reviewer} via Agent Co-Pilot"
-    )
-
-    try:
-        run_async(
-            decide_approval(
-                approval_id,
-                decision=norm_decision,
-                actor=reviewer,
-                reason_code=r_code,
-                reason_text=r_text,
-                view_mode="card",
-            )
-        )
-        return True
-    except Exception as exc:
-        print(f"Error in resolve_approval({approval_id}): {exc}")
-        return False
-
-
 def get_live_metrics() -> dict[str, Any]:
     """Computes real metrics directly from live SQLite tables."""
-    total_cases = query_core_one("SELECT COUNT(*) as c FROM cases")["c"]
-    auto_resolved = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome = 'AUTO'")["c"]
-    escalated = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome IN ('ESCALATE', 'APPROVE')")["c"]
+    total_cases_res = query_core_one("SELECT COUNT(*) as c FROM cases")
+    total_cases = total_cases_res["c"] if total_cases_res else 0
+
+    auto_res = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome = 'AUTO'")
+    auto_resolved = auto_res["c"] if auto_res else 0
+
+    esc_res = query_core_one("SELECT COUNT(*) as c FROM cases WHERE outcome IN ('ESCALATE', 'APPROVE')")
+    escalated = esc_res["c"] if esc_res else 0
     
     total_refunds_res = refunds_db.query_one("SELECT COUNT(*) as c, COALESCE(SUM(amount), 0) as s FROM refunds")
-    refund_count = total_refunds_res["c"]
-    refund_amount = total_refunds_res["s"]
+    refund_count = total_refunds_res["c"] if total_refunds_res else 0
+    refund_amount = total_refunds_res["s"] if total_refunds_res else 0
 
     comp_res = query_core_one("SELECT COUNT(*) as c, COALESCE(SUM(amount_estimate), 0) as s FROM compensation_claims")
     comp_count = comp_res["c"] if comp_res else 0

@@ -1,202 +1,323 @@
 """
-Custom UI & Theming for Saathi Autonomous AI Teammate
-Strict adherence to the official Paytm Color Palette:
-- #0474C4: Primary Electric Blue (Actions, active links, primary buttons)
-- #06457F: Deep Paytm Navy (Primary headers, card borders, brand accents)
-- #5379AE: Slate Blue (Secondary text, subtitles, subtle borders)
-- #A8C4EC: Soft Sky Blue (Background highlights, pills, focus states)
-- #262B40: Dark Navy (Dark surfaces, high-contrast text, sidebars)
-- #2C444C: Slate Charcoal (Card surfaces, secondary container backgrounds)
+Design tokens & CSS styling for Saathi Autonomous AI Teammate.
+Strict adherence to design tokens:
+- Page bg: #FFFFFF, surface: #F7F8FA, border: #E5E7EB (1px), text: #111827, muted: #6B7280
+- Accent: #0474C4 (Paytm blue, primary actions & active links only)
+- Status chips:
+  - AUTO: bg #ECFDF3 / text #027A48
+  - APPROVE: bg #FFFAEB / text #B54708
+  - ESCALATE: bg #FEF3F2 / text #B42318
+  - BLOCK: bg #F2F4F7 / text #344054
+- Radius: 10px. No shadows. No gradients. No banners.
+- Font: Inter with system fallbacks.
+- Tabular figures for amounts; small muted monospace for IDs.
 """
 
+from typing import Any
 import streamlit as st
+
+# Color Palette & Tokens
+PAGE_BG = "#FFFFFF"
+SURFACE_BG = "#F7F8FA"
+BORDER_COLOR = "#E5E7EB"
+TEXT_COLOR = "#111827"
+MUTED_COLOR = "#6B7280"
+ACCENT_BLUE = "#0474C4"
+
+STATUS_TOKENS = {
+    "AUTO": {"bg": "#ECFDF3", "text": "#027A48", "border": "#D1FADF"},
+    "APPROVE": {"bg": "#FFFAEB", "text": "#B54708", "border": "#FEDF89"},
+    "APPROVED": {"bg": "#ECFDF3", "text": "#027A48", "border": "#D1FADF"},
+    "ESCALATE": {"bg": "#FEF3F2", "text": "#B42318", "border": "#FECDCA"},
+    "ESCALATED": {"bg": "#FEF3F2", "text": "#B42318", "border": "#FECDCA"},
+    "REJECTED": {"bg": "#FEF3F2", "text": "#B42318", "border": "#FECDCA"},
+    "BLOCK": {"bg": "#F2F4F7", "text": "#344054", "border": "#EAECF0"},
+    "PENDING": {"bg": "#FFFAEB", "text": "#B54708", "border": "#FEDF89"},
+    "SUCCESS": {"bg": "#ECFDF3", "text": "#027A48", "border": "#D1FADF"},
+    "FAILED": {"bg": "#FEF3F2", "text": "#B42318", "border": "#FECDCA"},
+    "DEFAULT": {"bg": "#F2F4F7", "text": "#344054", "border": "#EAECF0"},
+}
 
 
 def inject_custom_css() -> None:
-    """Injects high-end, production-grade styling matching the provided color palette."""
+    """Injects clean, professional fintech ops styling."""
     st.markdown(
         """
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+        /* Base Typography & Max-Width */
         html, body, [class*="css"] {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            color: #111827;
         }
 
-        /* Top Brand Banner */
-        .saathi-header {
-            background: linear-gradient(135deg, #06457F 0%, #0474C4 100%);
-            color: #FFFFFF;
-            padding: 1.25rem 1.75rem;
-            border-radius: 12px;
+        .main .block-container {
+            max-width: 1200px;
+            padding-top: 1.5rem;
+            padding-bottom: 3rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        /* Headings */
+        h1, h2, h3, h4, h5, h6 {
+            color: #111827 !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 24px !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        h2, h3 {
+            font-size: 17px !important;
+            margin-top: 1.25rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        /* Page Header */
+        .saathi-page-header {
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 14px rgba(4, 116, 196, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #E5E7EB;
         }
-        .saathi-header h1 {
-            color: #FFFFFF !important;
+        .saathi-page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
             margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
+            line-height: 1.25;
         }
-        .saathi-header p {
-            color: #A8C4EC;
+        .saathi-page-subtitle {
+            font-size: 14px;
+            color: #6B7280;
             margin: 0.25rem 0 0 0;
-            font-size: 0.875rem;
         }
 
-        /* Strict High-Contrast text on white/light surfaces (fixes dark-mode white-on-white) */
-        .white-box, .profile-card, .metric-card, .resolution-box, .receipt-step {
-            background-color: #FFFFFF !important;
-            color: #000000 !important;
+        /* Status Chip */
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            font-variant-numeric: tabular-nums;
         }
-        .white-box *, .profile-card *, .metric-card *, .resolution-box *, .receipt-step * {
-            color: #000000 !important;
-        }
-        .white-box b, .profile-card b, .resolution-box b, .receipt-step b {
-            color: #000000 !important;
-            font-weight: 700 !important;
-        }
-        .white-box code, .profile-card code {
-            background-color: #EEF2F6 !important;
-            color: #06457F !important;
-            font-weight: 700 !important;
-            padding: 2px 6px;
+
+        /* ID Chip */
+        .id-chip {
+            display: inline-block;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 12px;
+            color: #4B5563;
+            background-color: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            padding: 1px 6px;
             border-radius: 4px;
         }
 
-        /* Metric Cards */
-        .metric-card {
-            background-color: #FFFFFF !important;
-            border: 1px solid #A8C4EC;
+        /* Key-Value List */
+        .kv-container {
+            border: 1px solid #E5E7EB;
             border-radius: 10px;
-            padding: 1.2rem;
-            box-shadow: 0 2px 6px rgba(38, 43, 64, 0.04);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            background-color: #F7F8FA;
+            padding: 0.75rem 1rem;
         }
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(4, 116, 196, 0.12);
-            border-color: #0474C4;
+        .kv-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.45rem 0;
+            border-bottom: 1px solid #E5E7EB;
+            font-size: 13px;
         }
-        .metric-title {
-            color: #5379AE !important;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.35rem;
+        .kv-row:last-child {
+            border-bottom: none;
         }
-        .metric-value {
-            color: #06457F !important;
-            font-size: 1.85rem;
-            font-weight: 700;
-            line-height: 1.1;
+        .kv-key {
+            color: #6B7280;
+            font-weight: 500;
         }
-        .metric-subtitle {
-            color: #2C444C !important;
-            font-size: 0.75rem;
-            margin-top: 0.35rem;
+        .kv-val {
+            color: #111827;
+            font-weight: 600;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
         }
 
-        /* Custom Resolution Box (Found / Did / Next Steps) */
-        .resolution-box {
-            background-color: #FFFFFF !important;
-            border: 1px solid #A8C4EC;
-            border-left: 5px solid #0474C4 !important;
-            border-radius: 0 10px 10px 0;
-            padding: 1.25rem;
-            margin: 1rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        /* Confidence Panel */
+        .conf-container {
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            background: #FFFFFF;
+            padding: 1rem;
         }
-        .resolution-section {
+        .conf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
             margin-bottom: 0.75rem;
         }
-        .resolution-label {
+        .conf-score {
+            font-size: 26px;
             font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+            color: #111827;
+            font-variant-numeric: tabular-nums;
         }
-        .res-found { color: #06457F !important; }
-        .res-did { color: #0474C4 !important; }
-        .res-next { color: #2C444C !important; }
-
-        /* Status Pills */
-        .status-pill {
-            display: inline-block;
-            padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+        .conf-band {
+            font-size: 12px;
             font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 9999px;
             text-transform: uppercase;
         }
-        .pill-success {
-            background-color: #E8F5E9;
-            color: #1B5E20;
-            border: 1px solid #A5D6A7;
+        .conf-bar-group {
+            margin-bottom: 0.5rem;
         }
-        .pill-pending {
-            background-color: #FFF8E1;
-            color: #E65100;
-            border: 1px solid #FFE082;
+        .conf-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #6B7280;
+            margin-bottom: 2px;
         }
-        .pill-failed {
-            background-color: #FFEBEE;
-            color: #B71C1C;
-            border: 1px solid #FFCDD2;
+        .conf-bar-track {
+            height: 4px;
+            background: #E5E7EB;
+            border-radius: 2px;
+            overflow: hidden;
         }
-        .pill-info {
-            background-color: #E3F2FD;
-            color: #06457F;
-            border: 1px solid #A8C4EC;
-        }
-
-        /* Customer Receipt Step */
-        .receipt-step {
-            padding: 0.65rem 0.85rem;
-            margin-bottom: 0.4rem;
-            border-radius: 6px;
-            background: #FFFFFF;
-            border-left: 3px solid #5379AE;
-            font-size: 0.85rem;
-            color: #262B40;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        .conf-bar-fill {
+            height: 100%;
+            background: #0474C4;
+            border-radius: 2px;
         }
 
-        /* Buttons */
+        /* Timeline */
+        .timeline-container {
+            border-left: 2px solid #E5E7EB;
+            margin-left: 0.5rem;
+            padding-left: 1rem;
+        }
+        .timeline-step {
+            position: relative;
+            margin-bottom: 0.85rem;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -1.45rem;
+            top: 0.2rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0474C4;
+            border: 2px solid #FFFFFF;
+            box-sizing: content-box;
+        }
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #6B7280;
+            margin-bottom: 2px;
+        }
+        .timeline-badge {
+            font-size: 11px;
+            font-weight: 600;
+            color: #111827;
+            background: #F3F4F6;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+        .timeline-summary {
+            font-size: 13px;
+            color: #111827;
+            line-height: 1.4;
+        }
+
+        /* KPI Card */
+        .kpi-card {
+            background-color: #F7F8FA;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+        }
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #6B7280;
+            margin-bottom: 0.25rem;
+        }
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+        .kpi-sub {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Buttons & Forms */
         div.stButton > button {
             border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 13px;
+            border: 1px solid #E5E7EB;
+            background: #FFFFFF;
+            color: #111827;
+            transition: all 0.15s ease;
+        }
+        div.stButton > button:hover {
+            border-color: #D1D5DB;
+            background: #F9FAFB;
         }
         div.stButton > button[kind="primary"] {
-            background-color: #0474C4;
-            color: #FFFFFF;
-            border: none;
+            background-color: #0474C4 !important;
+            color: #FFFFFF !important;
+            border: 1px solid #0474C4 !important;
         }
         div.stButton > button[kind="primary"]:hover {
-            background-color: #06457F;
-            box-shadow: 0 4px 12px rgba(4, 116, 196, 0.25);
+            background-color: #035b9c !important;
+            border-color: #035b9c !important;
         }
 
         /* Streamlit Tabs */
         .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
+            gap: 12px;
+            border-bottom: 1px solid #E5E7EB;
         }
         .stTabs [data-baseweb="tab"] {
-            border-radius: 6px 6px 0 0;
-            padding: 8px 16px;
-            font-weight: 600;
-            color: #5379AE;
+            padding: 8px 12px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #6B7280;
+            border-radius: 0;
+            border-bottom: 2px solid transparent;
         }
         .stTabs [aria-selected="true"] {
-            background-color: #FFFFFF !important;
             color: #0474C4 !important;
             border-bottom: 2px solid #0474C4 !important;
+            background: transparent !important;
+        }
+
+        /* Tables & Dataframes */
+        [data-testid="stDataFrame"] {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            overflow: hidden;
         }
         </style>
         """,
@@ -204,17 +325,13 @@ def inject_custom_css() -> None:
     )
 
 
-def render_header(title: str, subtitle: str, badge: str = "Paytm Saathi AI") -> None:
+def render_header(title: str, subtitle: str, badge: str | None = None) -> None:
+    """Backward-compatible header renderer (thin wrapper for new page_header)."""
     st.markdown(
         f"""
-        <div class="saathi-header">
-            <div>
-                <h1>{title}</h1>
-                <p>{subtitle}</p>
-            </div>
-            <div style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);">
-                {badge}
-            </div>
+        <div class="saathi-page-header">
+            <h1 class="saathi-page-title">{title}</h1>
+            <p class="saathi-page-subtitle">{subtitle}</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -222,14 +339,15 @@ def render_header(title: str, subtitle: str, badge: str = "Paytm Saathi AI") -> 
 
 
 def render_metric_card(title: str, value: str, subtitle: str = "") -> None:
+    """Backward-compatible metric card renderer (thin wrapper for new KPI)."""
+    sub_html = f'<div class="kpi-sub">{subtitle}</div>' if subtitle else ""
     st.markdown(
         f"""
-        <div class="metric-card">
-            <div class="metric-title">{title}</div>
-            <div class="metric-value">{value}</div>
-            {f'<div class="metric-subtitle">{subtitle}</div>' if subtitle else ''}
+        <div class="kpi-card">
+            <div class="kpi-label">{title}</div>
+            <div class="kpi-value">{value}</div>
+            {sub_html}
         </div>
         """,
         unsafe_allow_html=True,
     )
-

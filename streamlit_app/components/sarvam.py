@@ -2,9 +2,9 @@
 Sarvam AI Integration Service for Paytm Saathi.
 Supports:
 - Dual-Account API Key Pooling with automatic failover (Account 1 -> Account 2)
-- Text-to-Speech (bulbul:v1) in Hindi, English, Hinglish
-- Speech-to-Text (saaras:v1)
-- Chat Completion (sarvam-30b / sarvam-2b)
+- Text-to-Speech (bulbul:v3) in Hindi, English, Hinglish
+- Speech-to-Text (saaras:v3)
+- Chat Completion
 """
 
 import base64
