@@ -43,6 +43,16 @@ if not all_personas:
     st.info("No customer profiles found in database.")
     st.stop()
 
+# Filter out admin/agent staff: Helpdesk is strictly for Customers (Consumers) and Merchants
+eligible_personas = [
+    p for p in all_personas
+    if str(p.get("role", "")).lower() not in ("agent", "admin", "staff")
+    and not str(p.get("id", "")).startswith("A-")
+    and str(p.get("kyc_status", "")).upper() != "STAFF"
+]
+if not eligible_personas:
+    eligible_personas = all_personas
+
 # Simulation toggle
 col_ctrl, _ = st.columns([1, 3])
 with col_ctrl:
@@ -50,15 +60,15 @@ with col_ctrl:
 
 if not show_sim:
     visible_personas = [
-        p for p in all_personas
+        p for p in eligible_personas
         if not str(p.get("id", "")).startswith("U-3")
         and not p.get("hidden", False)
     ]
 else:
-    visible_personas = all_personas
+    visible_personas = eligible_personas
 
 if not visible_personas:
-    visible_personas = all_personas
+    visible_personas = eligible_personas
 
 # Default to first consumer (U-101 if present)
 default_idx = 0
@@ -73,7 +83,7 @@ persona_keys = list(persona_map.keys())
 col_left, col_right = st.columns([3, 2], gap="large")
 
 with col_left:
-    selected_label = st.selectbox("Select customer account", persona_keys, index=min(default_idx, len(persona_keys) - 1))
+    selected_label = st.selectbox("Select customer or merchant account", persona_keys, index=min(default_idx, len(persona_keys) - 1))
     customer = persona_map[selected_label]
     pid = customer["id"]
     is_merchant = str(customer.get("role", "")).lower() == "merchant"

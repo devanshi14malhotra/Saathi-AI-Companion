@@ -124,28 +124,43 @@ def render_overview() -> None:
 
     st.write("")
     st.markdown("### Workspace shortcuts")
-    st.page_link(p_helpdesk, label="Customer Helpdesk — Resolve disputes and test multilingual voice queries")
-    st.page_link(p_copilot, label="Agent Co-Pilot — Authorize high-value refund escalations and review handoff packets")
-    st.page_link(p_ledger, label="Transactions Ledger — Inspect live UPI transactions, merchant settlements, and refunds")
-    st.page_link(p_operations, label="Operations — Monitor bank gateway outages, time-travel TAT claims, and kill-switches")
-    st.page_link(p_analytics, label="Analytics — View audit events, agent performance, and notification outbox")
-    st.page_link(p_settings, label="Settings — Configure credentials and system provider")
+    st.page_link(p_helpdesk, label="Helpdesk [C, M] — Resolve customer & merchant disputes and test multilingual voice queries")
+    st.page_link(p_copilot, label="Agent Co-Pilot [A] — Authorize high-value refund escalations and review handoff packets")
+    st.page_link(p_ledger, label="Transactions Ledger [A, M] — Inspect live UPI transactions, merchant settlements, and refunds")
+    st.page_link(p_operations, label="Operations [A] — Monitor bank gateway outages, time-travel TAT claims, and kill-switches")
+    st.page_link(p_analytics, label="Analytics [A] — View audit events, agent performance, and notification outbox")
+    st.page_link(p_settings, label="Settings [A] — Configure credentials and system provider")
 
 
-# Navigation Routing
-p_overview = st.Page(render_overview, title="Overview", icon=":material/dashboard:", default=True)
-p_helpdesk = st.Page("pages/1_Customer_Helpdesk.py", title="Helpdesk", icon=":material/support_agent:")
-p_copilot = st.Page("pages/2_Agent_CoPilot.py", title="Co-Pilot", icon=":material/shield_person:")
-p_ledger = st.Page("pages/3_Transactions_Ledger.py", title="Ledger", icon=":material/receipt_long:")
-p_operations = st.Page("pages/4_Operations.py", title="Operations", icon=":material/tune:")
-p_analytics = st.Page("pages/5_Analytics.py", title="Analytics", icon=":material/monitoring:")
-p_settings = st.Page("pages/6_Settings.py", title="Settings", icon=":material/settings:")
+# Navigation Routing with Role Identifiers
+p_overview = st.Page(render_overview, title="Overview [A]", icon=":material/dashboard:", default=True)
+p_helpdesk = st.Page("pages/1_Customer_Helpdesk.py", title="Helpdesk [C, M]", icon=":material/support_agent:")
+p_copilot = st.Page("pages/2_Agent_CoPilot.py", title="Co-Pilot [A]", icon=":material/shield_person:")
+p_ledger = st.Page("pages/3_Transactions_Ledger.py", title="Ledger [A, M]", icon=":material/receipt_long:")
+p_operations = st.Page("pages/4_Operations.py", title="Operations [A]", icon=":material/tune:")
+p_analytics = st.Page("pages/5_Analytics.py", title="Analytics [A]", icon=":material/monitoring:")
+p_settings = st.Page("pages/6_Settings.py", title="Settings [A]", icon=":material/settings:")
 
 nav = st.navigation({
     "Overview": [p_overview],
-    "Customer": [p_helpdesk],
+    "Customer & Merchant": [p_helpdesk],
     "Operations": [p_copilot, p_ledger, p_operations],
     "System": [p_analytics, p_settings],
 })
+
+# Sidebar Role Legend Key
+with st.sidebar:
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style="font-size: 11px; color: #4B5563; padding: 6px 8px; background: #F9FAFB; border-radius: 6px; border: 1px solid #E5E7EB; line-height: 1.5;">
+            <div style="font-weight: 700; color: #1F2937; margin-bottom: 3px; font-size: 11.5px;">Role Key:</div>
+            <div><b style="color:#0474C4;">[C]</b> Customer &bull; UPI Users</div>
+            <div><b style="color:#D97706;">[M]</b> Merchant &bull; QR / Soundbox</div>
+            <div><b style="color:#059669;">[A]</b> Admin &bull; Ops, Supervisors, SRE</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 nav.run()
