@@ -248,7 +248,7 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def sync_id_counters(conn: sqlite3.Connection) -> None:
+def sync_id_counters(conn: sqlite3.Connection | None = None) -> None:
     """Sync all in-memory ID counters with max existing records in tables."""
     sync_targets = [
         ("cases", "case", "C-"),
@@ -257,19 +257,44 @@ def sync_id_counters(conn: sqlite3.Connection) -> None:
         ("compensation_claims", "claim", "CMP-"),
         ("eval_runs", "eval", "EV-"),
     ]
-    for table, kind, prefix in sync_targets:
-        try:
-            rows = conn.execute(f"SELECT id FROM {table}").fetchall()
-            for r in rows:
-                item_id = r["id"]
-                if isinstance(item_id, str) and item_id.startswith(prefix):
-                    try:
-                        num = int(item_id[len(prefix):])
-                        set_min_counter(kind, num)
-                    except ValueError:
-                        pass
-        except Exception:
-            pass
+    if conn is not None:
+        for table, kind, prefix in sync_targets:
+            try:
+                rows = conn.execute(f"SELECT id FROM {table}").fetchall()
+                for r in rows:
+                    item_id = r["id"]
+                    if isinstance(item_id, str) and item_id.startswith(prefix):
+                        try:
+                            num = int(item_id[len(prefix):])
+                            set_min_counter(kind, num)
+                        except ValueError:
+                            pass
+            except Exception:
+                pass
+
+    # Also scan external mock service databases to guarantee zero collisions across restarts
+    mock_targets = [
+        (DATA_DIR / "crm.db", "tickets", "ticket", "TK-"),
+        (DATA_DIR / "ledger.db", "locks", "lock", "LK-"),
+        (DATA_DIR / "refunds.db", "refunds", "refund", "RF-"),
+        (DATA_DIR / "refunds.db", "reconciliations", "recon", "RC-"),
+    ]
+    for db_path, table, kind, prefix in mock_targets:
+        if db_path.exists():
+            try:
+                mconn = sqlite3.connect(str(db_path))
+                mrows = mconn.execute(f"SELECT id FROM {table}").fetchall()
+                for mr in mrows:
+                    item_id = mr[0]
+                    if isinstance(item_id, str) and item_id.startswith(prefix):
+                        try:
+                            num = int(item_id[len(prefix):])
+                            set_min_counter(kind, num)
+                        except ValueError:
+                            pass
+                mconn.close()
+            except Exception:
+                pass
 
 
 def get_conn() -> sqlite3.Connection:

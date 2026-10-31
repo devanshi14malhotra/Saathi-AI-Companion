@@ -188,7 +188,10 @@ async def create_lock(
             return JSONResponse(status_code=200, content=existing)
 
     now = datetime.now(timezone.utc)
-    lock_id = next_id("lock")
+    while True:
+        lock_id = next_id("lock")
+        if not ledger_db.query_one("SELECT id FROM locks WHERE id = ?", (lock_id,)):
+            break
     expires_at = (now + timedelta(hours=hours)).isoformat()
     row = {
         "id": lock_id,

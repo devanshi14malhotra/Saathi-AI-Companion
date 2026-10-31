@@ -25,9 +25,10 @@ class SettlementAgent:
         if not st_res.ok or not isinstance(st_res.data, dict):
             return AgentResult(
                 agent_name=self.NAME,
-                diagnosis="SETTLEMENT_HOLD",
+                diagnosis="SETTLEMENT_NOT_FOUND",
                 template_code="ESCALATED",
-                facts={"case_id": ctx.case_id, "owner": "Our team"},
+                facts={"case_id": ctx.case_id, "owner": "Our merchant settlement team"},
+                verified_facts=["No settlement batch record found for this merchant account in settlements database."],
                 triggers=["T4"],
             )
 

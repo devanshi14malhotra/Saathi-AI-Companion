@@ -3,7 +3,7 @@ from typing import Any
 
 DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
 HINGLISH_WORDS_RE = re.compile(
-    r"\b(?:mera|meri|kat|gaya|hua|nahi|karo|kab|aayega|kahan|bata|baat|insaan|paisa|ka|ki|ko|abhi|tak|kyun|ruka|do|baar)\b",
+    r"\b(?:mera|meri|kat|gaya|hua|nahi|karo|kab|aayega|kahan|bata|baat|insaan|paisa|ka|ki|ko|abhi|tak|kyun|ruka|do\s+baar|do\s+din|kar\s+do|bata\s+do|de\s+do|baar)\b",
     re.I,
 )
 
@@ -26,8 +26,8 @@ REFUND_STATUS_RE = re.compile(
 )
 SETTLE_RE = re.compile(r"(?:settlement|settle|सेटलमेंट)", re.I)
 MISMATCH_RE = re.compile(r"(?:less|short|kam|mismatch|कम|अंतर)", re.I)
-CRASH_RE = re.compile(r"(?:crash|crashing|hang|not opening|क्रैश)", re.I)
-HOWTO_RE = re.compile(r"(?:how to|kaise|कैसे)", re.I)
+CRASH_RE = re.compile(r"(?:crash|crashing|\bhang(?:s|ed|ing)?\b|not opening|क्रैश)", re.I)
+HOWTO_RE = re.compile(r"(?:how\s+(?:to|do\s+i|can\s+i)|kaise|कैसे)", re.I)
 LOGIN_RE = re.compile(r"(?:login|otp not|otp nahi aaya)", re.I)
 HUMAN_RE = re.compile(r"\b(?:human|agent|insaan|person|representative)\b|इंसान", re.I)
 

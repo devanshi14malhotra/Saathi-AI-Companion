@@ -1,0 +1,530 @@
+personas:
+  - id: U-101
+    name: "Ravi Sharma"
+    first_name: "Ravi"
+    role: consumer
+    type: consumer
+    language: hinglish
+    upi_id: "ravi@paytm"
+    phone: "+91 9876543210"
+    email: "ravi.sharma@example.com"
+    address: "42 MG Road, Indiranagar, Bengaluru"
+    kyc_status: "FULL_KYC"
+    device_info:
+      model: "Redmi Note 11"
+      os: "Android 13"
+      app_version: "9.4.1"
+  - id: U-102
+    name: "Ananya Verma"
+    first_name: "Ananya"
+    role: consumer
+    type: consumer
+    language: en
+    upi_id: "ananya@paytm"
+    phone: "+91 9812345678"
+    email: "ananya.v@example.com"
+    address: "18 Connaught Place, New Delhi"
+    kyc_status: "FULL_KYC"
+    device_info:
+      model: "iPhone 14"
+      os: "iOS 17.2"
+      app_version: "9.4.2"
+  - id: U-103
+    name: "Suresh Patel"
+    first_name: "Suresh"
+    role: consumer
+    type: consumer
+    language: hi
+    upi_id: "suresh@paytm"
+    phone: "+91 9823456789"
+    email: "suresh.patel@example.com"
+    address: "9 Navrangpura, Ahmedabad"
+    kyc_status: "FULL_KYC"
+    device_info:
+      model: "Samsung Galaxy M34"
+      os: "Android 14"
+      app_version: "9.4.1"
+  - id: U-104
+    name: "Vikram Singh"
+    first_name: "Vikram"
+    role: consumer
+    type: consumer
+    language: en
+    hidden: true
+    upi_id: "vikram@paytm"
+    phone: "+91 9899887766"
+    email: "vikram.s@example.com"
+    address: "7 Civil Lines, Jaipur"
+    kyc_status: "FULL_KYC"
+    device_info:
+      model: "OnePlus 11"
+      os: "Android 14"
+      app_version: "9.4.2"
+  - id: M-201
+    name: "Kiran General Store"
+    first_name: "Kiran"
+    role: merchant
+    type: merchant
+    language: hinglish
+    upi_id: "kirangeneral@paytm"
+    phone: "+91 9845012345"
+    email: "kiran.store@example.com"
+    address: "Shop 12, Dadar West, Mumbai"
+    kyc_status: "FULL_KYC"
+    device_info:
+      model: "Paytm Soundbox Pro"
+      os: "RTOS 4.1"
+      app_version: "9.4.0"
+  - id: M-202
+    name: "Meera Textiles"
+    first_name: "Meera"
+    role: merchant
+    type: merchant
+    language: en
+    upi_id: "meeratextiles@paytm"
+    phone: "+91 9871122334"
+    email: "meera.textiles@example.com"
+    address: "45 T Nagar, Chennai"
+    kyc_status: "FULL_KYC"
+    device_info:
+      model: "Redmi Note 12"
+      os: "Android 13"
+      app_version: "9.4.1"
+  - id: A-1
+    name: "Priya Nair"
+    first_name: "Priya"
+    role: agent
+    type: support
+    language: en
+    upi_id: "priya.ops@paytm"
+    phone: "+91 9800000001"
+    email: "priya.nair@paytm.example.com"
+    address: "Noida Sector 16"
+    kyc_status: "STAFF"
+    device_info:
+      model: "Console Web"
+      os: "macOS"
+      app_version: "1.0.0"
+  - id: A-2
+    name: "Arjun Mehta"
+    first_name: "Arjun"
+    role: ops_lead
+    type: support
+    language: en
+    upi_id: "arjun.lead@paytm"
+    phone: "+91 9800000002"
+    email: "arjun.mehta@paytm.example.com"
+    address: "Noida Sector 16"
+    kyc_status: "STAFF"
+    device_info:
+      model: "Console Web"
+      os: "macOS"
+      app_version: "1.0.0"
+
+transactions:
+  # Unrelated background transactions
+  - id: TXN-0101
+    user: U-101
+    amount: 340
+    counterparty: "Grocery Mart"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "HDFC_OK"
+    reversal_status: NONE
+    age_hours: 48
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-0102
+    user: U-101
+    amount: 120
+    counterparty: "Metro Card"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "HDFC_OK"
+    reversal_status: NONE
+    age_hours: 96
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-0103
+    user: U-101
+    amount: 80
+    counterparty: "Chai Point"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "HDFC_OK"
+    reversal_status: NONE
+    age_hours: 24
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-0201
+    user: U-102
+    amount: 420
+    counterparty: "BookMyShow"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "ICICI_OK"
+    reversal_status: NONE
+    age_hours: 72
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-0202
+    user: U-102
+    amount: 210
+    counterparty: "Uber India"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "ICICI_OK"
+    reversal_status: NONE
+    age_hours: 48
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-0301
+    user: U-103
+    amount: 190
+    counterparty: "Mother Dairy"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "SBI_OK"
+    reversal_status: NONE
+    age_hours: 36
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-0302
+    user: U-103
+    amount: 260
+    counterparty: "Reliance Smart"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "SBI_OK"
+    reversal_status: NONE
+    age_hours: 60
+    rail: BILL_PAY
+    remark: ""
+
+  # Foreign user transaction (S14)
+  - id: TXN-9001
+    user: U-104
+    amount: 2200
+    counterparty: "Luxury Watches"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 30
+    rail: BILL_PAY
+    remark: ""
+
+  # Core interactive scenario transactions (also applied via seed_ops in eval)
+  - id: TXN-1001
+    user: U-101
+    amount: 500
+    counterparty: "BSES Electricity"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 30
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1002
+    user: U-101
+    amount: 450
+    counterparty: "CityMart"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "HDFC_OK"
+    reversal_status: NONE
+    age_hours: 20
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1003
+    user: U-101
+    amount: 299
+    counterparty: "Airtel"
+    status: PENDING
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_PENDING"
+    reversal_status: SCHEDULED
+    reversal_eta_hours: 6
+    age_hours: 4
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1004a
+    user: U-101
+    amount: 1200
+    counterparty: "Big Bazaar"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "HDFC_OK"
+    reversal_status: NONE
+    age_hours: 26.05
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1004b
+    user: U-101
+    amount: 1200
+    counterparty: "Big Bazaar"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 26.0
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1005
+    user: U-102
+    amount: 8400
+    counterparty: "Sharma Furnitures"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 28
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1006
+    user: U-102
+    amount: 30000
+    counterparty: "Rent"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 26
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1007
+    user: U-102
+    amount: 620
+    counterparty: "Zomato"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: NOT_DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_MISMATCH"
+    reversal_status: NONE
+    age_hours: 26
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1008
+    user: U-101
+    amount: 1500
+    counterparty: "Myntra"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 48
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1009
+    user: U-102
+    amount: 980
+    counterparty: "Swiggy"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 130
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1012
+    user: U-103
+    amount: 4500
+    counterparty: "Unknown Merchant"
+    status: SUCCESS
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 1
+    bank_code: "SBI_OK"
+    reversal_status: NONE
+    age_hours: 2
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1013
+    user: U-101
+    amount: 300
+    counterparty: "Metro Recharge"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 28
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1015
+    user: U-101
+    amount: 650
+    counterparty: "Dominos"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 28
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1016
+    user: U-101
+    amount: 550
+    counterparty: "Fresh Basket"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 25
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1017
+    user: U-102
+    amount: 750
+    counterparty: "QuickMart"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 28
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1018
+    user: U-102
+    amount: 820
+    counterparty: "BookHub"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 28
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1020
+    user: U-101
+    amount: 380
+    counterparty: "Pizza Point"
+    status: FAILED
+    debit_status: NOT_DEBITED
+    bank_debit_status: NOT_DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_DECLINED"
+    reversal_status: NONE
+    age_hours: 18
+    rail: BILL_PAY
+    remark: ""
+  - id: TXN-1023
+    user: U-102
+    amount: 500
+    counterparty: "QuickRecharge"
+    status: FAILED
+    debit_status: DEBITED
+    bank_debit_status: DEBITED
+    credit_to_merchant: 0
+    bank_code: "BANK_TIMEOUT"
+    reversal_status: NONE
+    age_hours: 30
+    rail: UPI
+    remark: ""
+
+refunds:
+  - id: RF-2008
+    txn_id: TXN-1008
+    user: U-101
+    amount: 1500
+    status: PROCESSING
+    reason: "REFUND_DUE"
+    initiated_age_hours: 24
+    eta_hours_from_init: 72
+  - id: RF-2009
+    txn_id: TXN-1009
+    user: U-102
+    amount: 980
+    status: PROCESSING
+    reason: "REFUND_DUE"
+    initiated_age_hours: 120
+    eta_hours_from_init: 72
+
+settlements:
+  - id: SET-3001
+    merchant_id: M-201
+    expected_amount: 14200
+    actual_amount: 14200
+    status: COMPLETED
+    hold_reason: NONE
+    due_age_hours: 96
+  - id: SET-3002
+    merchant_id: M-201
+    expected_amount: 16500
+    actual_amount: 16500
+    status: COMPLETED
+    hold_reason: NONE
+    due_age_hours: 72
+  - id: SET-3010
+    merchant_id: M-201
+    expected_amount: 18400
+    actual_amount: 18400
+    status: PENDING
+    hold_reason: BANK_HOLIDAY
+    due_age_hours: 24
+  - id: SET-3003
+    merchant_id: M-202
+    expected_amount: 28000
+    actual_amount: 28000
+    status: COMPLETED
+    hold_reason: NONE
+    due_age_hours: 96
+  - id: SET-3004
+    merchant_id: M-202
+    expected_amount: 31000
+    actual_amount: 31000
+    status: COMPLETED
+    hold_reason: NONE
+    due_age_hours: 72
+  - id: SET-3011
+    merchant_id: M-202
+    expected_amount: 42000
+    actual_amount: 0
+    status: HELD
+    hold_reason: RISK_REVIEW
+    due_age_hours: 48

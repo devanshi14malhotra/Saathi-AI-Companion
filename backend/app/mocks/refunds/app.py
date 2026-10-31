@@ -180,7 +180,10 @@ async def initiate_refund(
 
     now = datetime.now(timezone.utc)
     eta = now + timedelta(hours=72)
-    refund_id = next_id("refund")
+    while True:
+        refund_id = next_id("refund")
+        if not refunds_db.query_one("SELECT id FROM refunds WHERE id = ?", (refund_id,)):
+            break
     row = {
         "id": refund_id,
         "txn_id": txn_id,
@@ -278,7 +281,10 @@ async def raise_reconciliation(
     ref_id = str(payload.get("ref_id", ""))
     case_id = str(payload.get("case_id", x_case_id or ""))
 
-    recon_id = next_id("recon")
+    while True:
+        recon_id = next_id("recon")
+        if not refunds_db.query_one("SELECT id FROM reconciliations WHERE id = ?", (recon_id,)):
+            break
     now_iso = utc_now_iso()
     row = {
         "id": recon_id,

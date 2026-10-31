@@ -153,7 +153,10 @@ async def create_ticket(
     x_acting_user: str = Header(alias="X-Acting-User"),
     x_case_id: str | None = Header(default="", alias="X-Case-Id"),
 ):
-    ticket_id = next_id("ticket")
+    while True:
+        ticket_id = next_id("ticket")
+        if not crm_db.query_one("SELECT id FROM tickets WHERE id = ?", (ticket_id,)):
+            break
     case_id = str(payload.get("case_id") or x_case_id or "")
     category = str(payload.get("category", "GENERAL"))
     details = payload.get("details", {})
