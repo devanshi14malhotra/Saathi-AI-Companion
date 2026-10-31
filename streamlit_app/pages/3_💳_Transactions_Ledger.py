@@ -107,9 +107,14 @@ with tab_inject:
     st.write("Post an actual transaction to the ledger database.")
 
     with st.form("inject_form"):
+        from streamlit_app.components.db_helper import get_all_personas
+        all_p = get_all_personas()
+        user_ids = [f"{p['id']} - {p['name']}" for p in all_p] if all_p else ["U-101 - Aarav Sharma", "U-102 - Sunita Patel", "M-201 - Ramesh Kirana Store"]
+
         col_u, col_amt, col_bank = st.columns(3)
         with col_u:
-            i_user = st.selectbox("Target Customer:", ["U-101", "U-102", "U-103", "U-104", "M-201"])
+            sel_u = st.selectbox("Target Customer:", user_ids)
+            i_user = sel_u.split(" - ")[0]
         with col_amt:
             i_amt = st.number_input("Amount (₹):", min_value=1, max_value=50000, value=750)
         with col_bank:
@@ -129,7 +134,11 @@ with tab_inject:
             from app.core.ids import next_id
             from datetime import datetime, timezone
 
-            new_txn_id = next_id("txn")
+            while True:
+                new_txn_id = next_id("txn")
+                if not ledger_db.query_one("SELECT id FROM transactions WHERE id = ?", (new_txn_id,)):
+                    break
+
             now_str = datetime.now(timezone.utc).isoformat()
             ledger_db.execute(
                 """

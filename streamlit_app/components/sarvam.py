@@ -50,7 +50,7 @@ def check_sarvam_health(api_key: str) -> dict[str, Any]:
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "sarvam-105b",
+        "model": "sarvam-105b-conversations",
         "messages": [{"role": "user", "content": "ping"}],
         "max_tokens": 5,
         "temperature": 0.0,

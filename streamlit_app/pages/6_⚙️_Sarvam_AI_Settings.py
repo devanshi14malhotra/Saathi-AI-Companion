@@ -131,7 +131,7 @@ new_provider = st.radio(
     "Choose Active LLM Engine:",
     [
         "stub (Fast, offline, 100% deterministic local provider)",
-        "sarvam (Live Sarvam AI: sarvam-105b model + bulbul:v3 TTS + saaras:v3 STT)",
+        "sarvam (Live Sarvam AI: sarvam-105b-conversations + bulbul:v3 TTS + saaras:v3 STT)",
     ],
     index=1 if active_provider == "sarvam" else 0,
 )

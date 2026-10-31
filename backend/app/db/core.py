@@ -276,6 +276,7 @@ def sync_id_counters(conn: sqlite3.Connection | None = None) -> None:
     mock_targets = [
         (DATA_DIR / "crm.db", "tickets", "ticket", "TK-"),
         (DATA_DIR / "ledger.db", "locks", "lock", "LK-"),
+        (DATA_DIR / "ledger.db", "transactions", "txn", "TXN-"),
         (DATA_DIR / "refunds.db", "refunds", "refund", "RF-"),
         (DATA_DIR / "refunds.db", "reconciliations", "recon", "RC-"),
     ]

@@ -12,6 +12,7 @@ _DEFAULTS = {
     "incident": 0,
     "claim": 0,
     "lock": 5000,
+    "txn": 2000,
 }
 
 _PREFIXES = {
@@ -24,6 +25,7 @@ _PREFIXES = {
     "incident": "INC-",
     "claim": "CMP-",
     "lock": "LK-",
+    "txn": "TXN-",
 }
 
 _counters = dict(_DEFAULTS)
