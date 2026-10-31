@@ -140,7 +140,7 @@ with c6:
         <div style="background: #F8FAFD; border: 1px solid #A8C4EC; border-radius: 10px; padding: 1.25rem; height: 100%;">
             <h4 style="color: #06457F; margin-top:0;">⚙️ 6. System & Model Health</h4>
             <p style="color: #2C444C; font-size: 0.9rem;">
-                Monitors credentials loaded from your local <code>.env</code> file (Dual Account failover with 1,200 credits). 
+                Monitors live API credentials with dual-account credit failover. 
                 Test live API health, switch between Sarvam-30B LLM and local offline stub, and test voice synthesis.
             </p>
         </div>

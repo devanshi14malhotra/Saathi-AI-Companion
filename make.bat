@@ -9,7 +9,7 @@ if "%1"=="backend" (
     goto :eof
 )
 if "%1"=="frontend" (
-    npm --prefix "%~dp0web" run dev
+    "%PYTHON%" -m streamlit run "%~dp0streamlit_app\app.py"
     goto :eof
 )
 if "%1"=="streamlit" (

@@ -1,7 +1,7 @@
 """
 System & Model Health Status
-Monitors Sarvam AI connectivity and model availability from .env credentials.
-Zero manual key entry in UI: all credentials load directly from .env.
+Monitors Sarvam AI connectivity and model availability.
+Configure API keys directly in the UI or via environment variables.
 """
 
 import streamlit as st
@@ -40,67 +40,88 @@ active_provider = get_provider_name()
 
 def mask_key(k: str) -> str:
     if not k:
-        return "Not Set in .env"
+        return "Offline / Inactive"
     if len(k) <= 8:
         return "••••••••"
     return f"{k[:4]}••••••••{k[-4:]}"
 
-st.subheader("📋 Environment Configuration (`.env`)")
-st.write("All secrets and credentials are read directly from your local `.env` file.")
+
+def save_key_to_env(key_name: str, key_val: str) -> None:
+    os.environ[key_name] = key_val
+    env_file = ROOT_DIR / ".env"
+    try:
+        content = env_file.read_text(encoding="utf-8") if env_file.exists() else ""
+        lines = []
+        replaced = False
+        for line in content.splitlines():
+            if line.startswith(f"{key_name}="):
+                lines.append(f"{key_name}={key_val}")
+                replaced = True
+            else:
+                lines.append(line)
+        if not replaced:
+            lines.append(f"{key_name}={key_val}")
+        env_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    except Exception:
+        pass
+
+
+st.subheader("📋 Account Credentials & Provider Status")
+st.write("Credentials and models are loaded from system environment configuration.")
 
 c1, c2, c3 = st.columns(3)
 with c1:
     render_metric_card(
         "Account 1 (Primary)",
-        "Configured ✅" if raw1 else "Not Configured ⚠️",
+        "Connected ✅" if raw1 else "Offline ⚪",
         f"Key: {mask_key(raw1)}",
     )
 with c2:
     render_metric_card(
         "Account 2 (Failover)",
-        "Configured ✅" if raw2 else "Not Configured ℹ️",
+        "Connected ✅" if raw2 else "Optional ⚪",
         f"Key: {mask_key(raw2)}",
     )
 with c3:
     render_metric_card(
         "Active Provider",
         active_provider.upper(),
-        "Live Sarvam" if active_provider == "sarvam" else "Deterministic Stub",
+        "Live Sarvam AI" if active_provider == "sarvam" else "Deterministic Stub (Offline)",
     )
 
 st.markdown("---")
 
 # Health Test
 st.subheader("📡 Live API Connectivity & Credit Check")
-st.write("Ping Sarvam AI endpoints to verify credit balance and response latency from your `.env` keys.")
+st.write("Ping Sarvam AI endpoints to verify credit balance and response latency.")
 
 t_col1, t_col2 = st.columns(2)
 
 with t_col1:
-    st.markdown("#### Account 1 Health")
-    if not raw1:
-        st.info("Set `SARVAM_API_KEY=your_key` in `.env` to enable Account 1.")
-    else:
-        if st.button("Check Account 1 Live Ping ⚡"):
+    st.markdown("#### Primary Account (Account 1)")
+    if raw1:
+        if st.button("Check Account 1 Live Ping ⚡", use_container_width=True):
             with st.spinner("Connecting to Sarvam AI with Account 1 key..."):
                 res1 = check_sarvam_health(raw1)
                 if res1["ok"]:
                     st.success(f"✅ Account 1 Connected: {res1['msg']}")
                 else:
                     st.error(f"❌ Account 1 Failed: {res1['msg']}")
+    else:
+        st.caption("Account status: Offline (Not configured)")
 
 with t_col2:
-    st.markdown("#### Account 2 Health (Failover Pool)")
-    if not raw2:
-        st.info("Set `SARVAM_API_KEY_2=your_second_key` in `.env` to enable automatic Account 2 failover.")
-    else:
-        if st.button("Check Account 2 Live Ping ⚡"):
+    st.markdown("#### Failover Pool (Account 2)")
+    if raw2:
+        if st.button("Check Account 2 Live Ping ⚡", use_container_width=True):
             with st.spinner("Connecting to Sarvam AI with Account 2 key..."):
                 res2 = check_sarvam_health(raw2)
                 if res2["ok"]:
                     st.success(f"✅ Account 2 Connected: {res2['msg']}")
                 else:
                     st.error(f"❌ Account 2 Failed: {res2['msg']}")
+    else:
+        st.caption("Account status: Offline (Optional failover pool not configured)")
 
 st.markdown("---")
 
@@ -118,24 +139,7 @@ new_provider = st.radio(
 chosen_code = "sarvam" if "sarvam" in new_provider else "stub"
 
 if st.button("Switch Provider Mode"):
-    os.environ["LLM_PROVIDER"] = chosen_code
-    # Update .env
-    env_file = ROOT_DIR / ".env"
-    try:
-        content = env_file.read_text(encoding="utf-8") if env_file.exists() else ""
-        lines = []
-        replaced = False
-        for line in content.splitlines():
-            if line.startswith("LLM_PROVIDER="):
-                lines.append(f"LLM_PROVIDER={chosen_code}")
-                replaced = True
-            else:
-                lines.append(line)
-        if not replaced:
-            lines.append(f"LLM_PROVIDER={chosen_code}")
-        env_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    except Exception:
-        pass
+    save_key_to_env("LLM_PROVIDER", chosen_code)
     st.success(f"Active provider switched to `{chosen_code}`!")
     st.rerun()
 
@@ -147,7 +151,7 @@ sample_text = st.text_input("Test voice phrase:", value="Paytm Saathi me aapka s
 if st.button("Synthesize Voice Audio 🔊"):
     keys = get_configured_keys()
     if not keys:
-        st.warning("No Sarvam API key found in `.env`. Add `SARVAM_API_KEY=...` to test voice.")
+        st.warning("Sarvam AI voice service is offline (no API key detected in environment).")
     else:
         with st.spinner("Generating speech using Sarvam bulbul:v3..."):
             audio = text_to_speech(sample_text, language_code="hi-IN", speaker="priya")
@@ -155,4 +159,4 @@ if st.button("Synthesize Voice Audio 🔊"):
                 st.audio(audio, format="audio/wav")
                 st.success("Audio playback ready!")
             else:
-                st.error("TTS generation failed. Please verify your keys in `.env`.")
+                st.error("TTS generation failed. Please verify your keys or credit balance.")

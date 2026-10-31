@@ -195,11 +195,50 @@ class ConfigManager:
         )
         return paused
 
+    def set_threshold_override(self, key: str, value: Any, actor: str) -> None:
+        old_row = query_one("SELECT value FROM config_state WHERE key = ?", (f"threshold:{key}",))
+        old_val = old_row["value"] if old_row else str(self.thresholds.get(key, ""))
+        execute(
+            "INSERT OR REPLACE INTO config_state(key, value) VALUES (?, ?)",
+            (f"threshold:{key}", str(value)),
+        )
+        execute(
+            "INSERT INTO config_audit(ts, actor, key, old, new) VALUES (?, ?, ?, ?, ?)",
+            (utc_now_iso(), actor, f"threshold:{key}", str(old_val), str(value)),
+        )
+
     def get_policy_config(self, override_autonomy: dict[str, str] | None = None) -> PolicyConfig:
         autonomy = override_autonomy if override_autonomy is not None else self.get_autonomy_modes()
+
+        ceiling = int(self.thresholds.get("ceiling", 25000))
+        c_row = query_one("SELECT value FROM config_state WHERE key = 'threshold:ceiling'")
+        if c_row and c_row.get("value"):
+            try:
+                ceiling = int(c_row["value"])
+            except ValueError:
+                pass
+
+        min_conf = float(self.thresholds.get("min_auto_confidence", 0.70))
+        conf_row = query_one("SELECT value FROM config_state WHERE key = 'threshold:min_auto_confidence'")
+        if conf_row and conf_row.get("value"):
+            try:
+                min_conf = float(conf_row["value"])
+            except ValueError:
+                pass
+
+        modes = dict(self.autonomy_cfg.get("modes", {}))
+        cap_row = query_one("SELECT value FROM config_state WHERE key = 'threshold:guarded_auto_cap'")
+        if cap_row and cap_row.get("value"):
+            try:
+                if "guarded" in modes:
+                    modes["guarded"] = dict(modes["guarded"])
+                    modes["guarded"]["auto_cap"] = int(cap_row["value"])
+            except ValueError:
+                pass
+
         return PolicyConfig(
-            ceiling=int(self.thresholds.get("ceiling", 25000)),
-            min_auto_confidence=float(self.thresholds.get("min_auto_confidence", 0.70)),
+            ceiling=ceiling,
+            min_auto_confidence=min_conf,
             confidence_weights=dict(
                 self.thresholds.get(
                     "confidence_weights",
@@ -208,7 +247,7 @@ class ConfigManager:
             ),
             velocity_max_auto_refunds_24h=int(self.thresholds.get("velocity_max_auto_refunds_24h", 3)),
             velocity_max_auto_amount_24h=int(self.thresholds.get("velocity_max_auto_amount_24h", 15000)),
-            modes=dict(self.autonomy_cfg.get("modes", {})),
+            modes=modes,
             autonomy=autonomy,
             locked=list(self.autonomy_cfg.get("locked", ["fraud"])),
         )

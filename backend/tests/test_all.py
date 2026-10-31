@@ -210,3 +210,72 @@ async def test_end_to_end_scenarios_s1_s5_s13_s14():
     # S23: Phantom refund caught & recovered
     r_s23 = await run_scenario_variant(all_scs["S23"], all_scs["S23"]["variants"][0])
     assert r_s23["passed"] is True
+
+
+def test_async_runner_and_copilot_approval_lifecycle():
+    import asyncio
+    from streamlit_app.components.db_helper import run_async, resolve_approval
+    from app.core.orchestrator import handle_message, get_case_detail
+    from app.db.core import query_one, query_all
+    from app.mocks.refunds.db import refunds_db
+
+    reset_all_data(preserve_eval_runs=True, preserve_confidence_log=True)
+
+    # 1. Verify run_async under nested running loop (P0.2)
+    async def sample_coro():
+        return "nested_loop_success"
+
+    async def nested_caller():
+        return run_async(sample_coro())
+
+    res_nested = asyncio.run(nested_caller())
+    assert res_nested == "nested_loop_success"
+
+    # 2. Trigger an over-cap approval case (P0.1)
+    # U-102 has TXN-1005 (₹8,400 > ₹5,000 auto-cap in guarded mode)
+    case_detail = run_async(handle_message(persona_id="U-102", text="My payment of 8400 failed on Sharma Furnitures TXN-1005"))
+    assert case_detail["outcome"] == "APPROVE"
+    assert case_detail["rule_fired"] == "4"
+    assert len(case_detail["approvals"]) == 1
+
+    app_id = case_detail["approvals"][0]["id"]
+    case_id = case_detail["id"]
+
+    # 3. Test resolve_approval with APPROVE
+    ok = resolve_approval(app_id, "APPROVE", reviewer="Supervisor-Priya", reason_code="HUMAN_APPROVED")
+    assert ok is True
+
+    # Verify approval state in core.db
+    app_row = query_one("SELECT * FROM approvals WHERE id = ?", (app_id,))
+    assert app_row["status"] == "APPROVED"
+    assert app_row["decided_by"] == "human:Supervisor-Priya"
+
+    # Verify case closed and resolved
+    updated_case = run_async(get_case_detail(case_id))
+    assert updated_case["state"] == "CLOSED"
+
+    # Verify refund record actually written in refunds.db with correct amount
+    rf_rows = refunds_db.query_all("SELECT * FROM refunds WHERE txn_id = 'TXN-1005'")
+    assert len(rf_rows) == 1
+    assert rf_rows[0]["amount"] == 8400
+    assert rf_rows[0]["status"] in ("INITIATED", "PROCESSING", "COMPLETED")
+
+    # Verify read-after-write verification event was logged
+    verify_events = [e for e in updated_case["events"] if e.get("badge") == "[VERIFY] ✓"]
+    assert len(verify_events) >= 1
+
+    # Verify idempotency / duplicate approval attempt returns safely without duplicating refund
+    ok_dup = resolve_approval(app_id, "APPROVE", reviewer="Supervisor-Priya")
+    assert ok_dup is True
+    rf_rows_after = refunds_db.query_all("SELECT * FROM refunds WHERE txn_id = 'TXN-1005'")
+    assert len(rf_rows_after) == 1  # No duplicate refund!
+
+    # 4. Trigger second approval and test REJECT
+    case_detail_2 = run_async(handle_message(persona_id="U-102", text="My payment of 8400 failed again TXN-1005"))
+    if case_detail_2.get("approvals"):
+        app_id_2 = case_detail_2["approvals"][0]["id"]
+        ok_rej = resolve_approval(app_id_2, "REJECT", reviewer="Supervisor-Priya", reason_code="SUSPECTED_FRAUD")
+        assert ok_rej is True
+        app_row_2 = query_one("SELECT * FROM approvals WHERE id = ?", (app_id_2,))
+        assert app_row_2["status"] == "REJECTED"
+
