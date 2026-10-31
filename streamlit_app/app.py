@@ -8,10 +8,18 @@ import os
 import sys
 from pathlib import Path
 
-# Ensure paths
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Ensure paths and load environment variables
 ROOT_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(ROOT_DIR / ".env", override=False)
 sys.path.insert(0, str(ROOT_DIR))
 sys.path.insert(0, str(ROOT_DIR / "backend"))
+
+# If Sarvam key is configured and LLM_PROVIDER is not explicitly set, ensure it runs sarvam
+if os.environ.get("SARVAM_API_KEY") and not os.environ.get("LLM_PROVIDER"):
+    os.environ["LLM_PROVIDER"] = "sarvam"
 
 from streamlit_app.components.styles import inject_custom_css, render_header, render_metric_card
 from streamlit_app.components.db_helper import init_app_state, get_live_metrics, query_core_all

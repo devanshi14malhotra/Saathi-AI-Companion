@@ -33,7 +33,10 @@ render_header(
 # Fetch keys directly from environment
 raw1 = os.environ.get("SARVAM_API_KEY", "").strip()
 raw2 = os.environ.get("SARVAM_API_KEY_2", "").strip()
-active_provider = os.environ.get("LLM_PROVIDER", "stub").strip().lower()
+
+sys.path.insert(0, str(ROOT_DIR / "backend"))
+from app.llm.provider import get_provider_name
+active_provider = get_provider_name()
 
 def mask_key(k: str) -> str:
     if not k:

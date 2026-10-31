@@ -14,7 +14,15 @@ _openai_provider: OpenAICompatProvider | None = None
 
 
 def get_provider_name() -> str:
-    return os.environ.get("LLM_PROVIDER", "stub").strip().lower() or "stub"
+    raw = os.environ.get("LLM_PROVIDER", "").strip().lower()
+    if raw:
+        return raw
+    # If a Sarvam API key is available, main provider is Sarvam AI.
+    # Stub is only a fallback when no API key is configured.
+    from app.llm.openai_compat import get_sarvam_api_keys
+    if get_sarvam_api_keys():
+        return "sarvam"
+    return "stub"
 
 
 def get_provider() -> Provider:

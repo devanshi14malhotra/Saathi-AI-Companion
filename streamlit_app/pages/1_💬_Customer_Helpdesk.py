@@ -8,9 +8,11 @@ import streamlit as st
 import json
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Paths
+# Paths and environment
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(ROOT_DIR / ".env", override=False)
 sys.path.insert(0, str(ROOT_DIR))
 sys.path.insert(0, str(ROOT_DIR / "backend"))
 
